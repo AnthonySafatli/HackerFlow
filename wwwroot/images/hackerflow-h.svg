@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144">
+  <defs>
+    <linearGradient id="flow" x1="12" y1="20" x2="132" y2="124"
+      gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#22D3A7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- HackerFlow H -->
+  <rect width="144" height="144" rx="34" fill="#121A2B"/>
+
+  <!-- Vertical strokes -->
+  <path
+    d="M38 34V110"
+    fill="none"
+    stroke="url(#flow)"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M106 34V110"
+    fill="none"
+    stroke="url(#flow)"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+
+  <!-- Flow connector -->
+  <path
+    d="M38 72C52 52 66 52 76 72C86 92 94 92 106 72"
+    fill="none"
+    stroke="#F5F7FF"
+    stroke-width="12"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Flow endpoint -->
+  <circle
+    cx="106"
+    cy="110"
+    r="7"
+    fill="#22D3A7"
+  />
+</svg>

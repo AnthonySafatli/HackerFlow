@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" role="img" aria-labelledby="title desc">
+  <title id="title">HackerFlow</title>
+  <desc id="desc">HackerFlow logo with a flowing H mark and wordmark.</desc>
+  <defs>
+    <linearGradient id="flow" x1="20" y1="20" x2="145" y2="145" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#22D3A7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Transparent canvas. Recommended app background: #0B1020 -->
+  <g transform="translate(18 18)">
+    <rect width="144" height="144" rx="34" fill="#121A2B"/>
+
+    <!-- H / flow symbol -->
+    <path d="M38 34V110" fill="none" stroke="url(#flow)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M106 34V110" fill="none" stroke="url(#flow)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M38 72C51 53 65 53 76 72C87 91 94 91 106 72" fill="none" stroke="#F5F7FF" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="106" cy="110" r="7" fill="#22D3A7"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="194" y="108"
+        fill="#F5F7FF"
+        font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="64"
+        font-weight="700"
+        letter-spacing="-2.5">Hacker<tspan fill="#22D3A7">Flow</tspan></text>
+</svg>
