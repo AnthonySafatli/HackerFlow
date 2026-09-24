@@ -256,9 +256,12 @@ footer {
   border-radius: 6px;
 }
 
-.hf-status-applied {
+.hf-status {
   background-color: rgba(124, 92, 255, 0.15);
   color: #a995ff;
+  padding: 0.4rem 0.65rem;
+  font-weight: 600;
+  border-radius: 6px;
 }
 
 /* --------------------------------
