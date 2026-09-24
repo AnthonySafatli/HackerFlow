@@ -1,20 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const modalElement = document.getElementById("applicationModal");
+
+  if (!modalElement) {
+    return;
+  }
+
+  const modal = new bootstrap.Modal(modalElement);
+
+  const form = document.getElementById("applicationForm");
+  const modalTitle = document.getElementById("applicationModalLabel");
+  const modalSubtitle = document.getElementById("applicationModalSubtitle");
+  const saveButton = document.getElementById("applicationSaveButton");
+  const actionsSection = document.getElementById("applicationActionsSection");
+
+  const fields = {
+    id: document.getElementById("applicationId"),
+    company: document.getElementById("applicationCompany"),
+    role: document.getElementById("applicationRole"),
+    url: document.getElementById("applicationUrl"),
+    status: document.getElementById("applicationStatus"),
+    method: document.getElementById("applicationMethod"),
+    dateApplied: document.getElementById("applicationDateApplied"),
+    followUpDate: document.getElementById("applicationFollowUpDate"),
+    contact: document.getElementById("applicationContact"),
+    jobDescription: document.getElementById("applicationJobDescription"),
+    notes: document.getElementById("applicationNotes"),
+    resumePath: document.getElementById("applicationResumePath"),
+    coverLetterPath: document.getElementById("applicationCoverLetterPath"),
+  };
+
+  /*
+   * Pipeline filtering
+   */
   const pipelineSteps = document.querySelectorAll(".pipeline-step");
   const applicationRows = document.querySelectorAll(
     "#applicationsTable tbody tr",
   );
 
-  const applicationModalElement = document.getElementById("applicationModal");
-  const applicationModal = applicationModalElement
-    ? new bootstrap.Modal(applicationModalElement)
-    : null;
-
-  const modalTitle = document.getElementById("applicationModalLabel");
-  const newApplicationButton = document.getElementById("newApplicationButton");
-
-  /*
-   * Pipeline filtering
-   */
   pipelineSteps.forEach((step) => {
     step.addEventListener("click", (event) => {
       event.preventDefault();
@@ -30,11 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
       applicationRows.forEach((row) => {
         const rowStatus = row.dataset.status;
 
-        if (!status || status === "all" || rowStatus === status) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
-        }
+        row.style.display =
+          status === "all" || rowStatus === status ? "" : "none";
       });
     });
   });
@@ -42,41 +61,129 @@ document.addEventListener("DOMContentLoaded", () => {
   /*
    * New Application
    */
+  const newApplicationButton = document.getElementById("newApplicationButton");
+
   newApplicationButton?.addEventListener("click", () => {
-    openApplicationModal("new");
+    openNewApplication();
   });
 
   /*
-   * Details / Open buttons
+   * Details buttons
    */
   document.querySelectorAll(".application-details").forEach((button) => {
     button.addEventListener("click", () => {
-      openApplicationModal("details", button);
+      openDetails(button);
     });
   });
 
   /*
-   * Shared application modal
+   * Edit buttons
    */
-  function openApplicationModal(mode, button = null) {
-    if (!applicationModal) {
-      return;
-    }
+  document.querySelectorAll(".application-edit").forEach((button) => {
+    button.addEventListener("click", () => {
+      openEdit(button);
+    });
+  });
 
-    if (mode === "new") {
-      modalTitle.textContent = "New Application";
-    }
+  function openNewApplication() {
+    clearForm();
 
-    if (mode === "details") {
-      modalTitle.textContent = "Application Details";
+    setReadOnly(false);
 
-      // Application data can be loaded here later.
-      // For now, the modal remains blank.
-      const applicationId = button?.dataset.applicationId;
+    modalTitle.textContent = "New Application";
+    modalSubtitle.textContent = "Create a new application to track.";
 
-      console.log("Opening application:", applicationId);
-    }
+    saveButton.textContent = "Create Application";
 
-    applicationModal.show();
+    form.action = "?handler=Create";
+
+    actionsSection.classList.add("d-none");
+
+    modal.show();
+  }
+
+  function openDetails(button) {
+    populateForm(button);
+
+    setReadOnly(true);
+
+    modalTitle.textContent = "Application Details";
+    modalSubtitle.textContent =
+      "View application information and available actions.";
+
+    saveButton.classList.add("d-none");
+
+    actionsSection.classList.remove("d-none");
+
+    modal.show();
+  }
+
+  function openEdit(button) {
+    populateForm(button);
+
+    setReadOnly(false);
+
+    modalTitle.textContent = "Edit Application";
+    modalSubtitle.textContent = "Update the application information.";
+
+    saveButton.textContent = "Save Changes";
+
+    saveButton.classList.remove("d-none");
+
+    form.action = "?handler=Update";
+
+    actionsSection.classList.add("d-none");
+
+    modal.show();
+  }
+
+  function populateForm(button) {
+    fields.id.value = button.dataset.id || "";
+    fields.company.value = button.dataset.company || "";
+    fields.role.value = button.dataset.role || "";
+    fields.url.value = button.dataset.url || "";
+    fields.status.value = button.dataset.status || "Bookmarked";
+    fields.method.value = button.dataset.method || "";
+    fields.dateApplied.value = button.dataset.dateApplied || "";
+    fields.followUpDate.value = button.dataset.followUpDate || "";
+    fields.contact.value = button.dataset.contact || "";
+    fields.jobDescription.value = button.dataset.jobDescription || "";
+    fields.notes.value = button.dataset.notes || "";
+    fields.resumePath.value = button.dataset.resumePath || "";
+    fields.coverLetterPath.value = button.dataset.coverLetterPath || "";
+  }
+
+  function clearForm() {
+    form.reset();
+
+    fields.id.value = "";
+    fields.status.value = "Bookmarked";
+
+    saveButton.classList.remove("d-none");
+  }
+
+  function setReadOnly(readOnly) {
+    const editableFields = [
+      fields.company,
+      fields.role,
+      fields.url,
+      fields.status,
+      fields.method,
+      fields.dateApplied,
+      fields.followUpDate,
+      fields.contact,
+      fields.jobDescription,
+      fields.notes,
+      fields.resumePath,
+      fields.coverLetterPath,
+    ];
+
+    editableFields.forEach((field) => {
+      field.readOnly = readOnly;
+
+      if (field.tagName === "SELECT") {
+        field.disabled = readOnly;
+      }
+    });
   }
 });

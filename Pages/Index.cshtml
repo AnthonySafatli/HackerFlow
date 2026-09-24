@@ -147,10 +147,37 @@
                             </td>
 
                             <td class="text-end">
-                                <button type="button" class="btn btn-sm btn-outline-secondary application-details"
-                                        data-application-id="@application.Company">
-                                    Open
-                                </button>
+
+                                <div class="d-flex justify-content-end gap-2">
+
+                                    <button type="button" class="btn btn-sm btn-outline-secondary application-details"
+                                            data-id="@application.Id" data-company="@application.Company"
+                                            data-role="@application.Role" data-url="@application.Url"
+                                            data-status="@application.Status" data-method="@application.Method"
+                                            data-date-applied="@application.DateApplied?.ToString("yyyy-MM-dd")"
+                                            data-follow-up-date="@application.FollowUpDate?.ToString("yyyy-MM-dd")"
+                                            data-contact="@application.Contact"
+                                            data-job-description="@application.JobDescription" data-notes="@application.Notes"
+                                            data-resume-path="@application.ResumePath"
+                                            data-cover-letter-path="@application.CoverLetterPath">
+                                        Open
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-outline-secondary application-edit"
+                                            data-id="@application.Id" data-company="@application.Company"
+                                            data-role="@application.Role" data-url="@application.Url"
+                                            data-status="@application.Status" data-method="@application.Method"
+                                            data-date-applied="@application.DateApplied?.ToString("yyyy-MM-dd")"
+                                            data-follow-up-date="@application.FollowUpDate?.ToString("yyyy-MM-dd")"
+                                            data-contact="@application.Contact"
+                                            data-job-description="@application.JobDescription" data-notes="@application.Notes"
+                                            data-resume-path="@application.ResumePath"
+                                            data-cover-letter-path="@application.CoverLetterPath">
+                                        Edit
+                                    </button>
+
+                                </div>
+
                             </td>
                         </tr>
                     }

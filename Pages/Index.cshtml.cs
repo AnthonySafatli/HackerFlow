@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using HackerFlow.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HackerFlow.Pages;
 
@@ -79,4 +80,19 @@ public class IndexModel : PageModel
             }
         ];
     }
+
+    public IActionResult OnPostCreate(JobApplication Application)
+    {
+        // Database/file-system logic will go here.
+
+        return RedirectToPage();
+    }
+
+    public IActionResult OnPostUpdate(JobApplication Application)
+    {
+        // Database/file-system logic will go here.
+
+        return RedirectToPage();
+    }
+
 }
