@@ -1,10 +1,187 @@
 ﻿@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Tracker";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="tracker-page">
+
+    <!-- Page header -->
+    <div class="d-flex flex-column flex-lg-row
+        justify-content-between align-items-lg-center
+        gap-3 mb-4">
+
+        <div>
+            <h1 class="h3 mb-1">Application Tracker</h1>
+            <p class="text-secondary mb-0">
+                Keep your job search moving.
+            </p>
+        </div>
+
+        <button type="button" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
+                data-bs-target="#newApplicationModal">
+            New Application <span class="ms-1">+</span>
+        </button>
+
+    </div>
+
+
+    <!-- Application pipeline -->
+    <div class="application-pipeline mb-4">
+
+        <a href="#" class="pipeline-step">
+            <span>Bookmarked</span>
+        </a>
+
+        <a href="#" class="pipeline-step">
+            <span>Applying</span>
+        </a>
+
+        <a href="#" class="pipeline-step active">
+            <span>Applied</span>
+        </a>
+
+        <a href="#" class="pipeline-step">
+            <span>Interviewing</span>
+        </a>
+
+        <a href="#" class="pipeline-step">
+            <span>Negotiating</span>
+        </a>
+
+        <a href="#" class="pipeline-step last">
+            <span>Accepted</span>
+        </a>
+
+    </div>
+
+
+    <!-- Applications table -->
+    <div class="card hf-card">
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Company</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date Applied</th>
+                        <th scope="col">Method</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Notes</th>
+                        <th scope="col" class="text-end">
+                            <span class="visually-hidden">Actions</span>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var application in Model.Applications)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">
+                                    @application.Company
+                                </div>
+
+                                <a href="@application.Url" target="_blank" rel="noopener noreferrer"
+                                   class="small text-secondary text-decoration-none">
+                                    @application.Url
+                                </a>
+                            </td>
+
+                            <td>
+                                <span class="fw-medium">
+                                    @application.Role
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge hf-status hf-status-@application.Status.ToLowerInvariant()">
+                                    @application.Status
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (application.DateApplied.HasValue)
+                                {
+                                    <span class="text-secondary">
+                                        @application.DateApplied.Value.ToString("MMM d, yyyy")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">—</span>
+                                }
+                            </td>
+
+                            <td>
+                                <span class="text-secondary">
+                                    @application.Method
+                                </span>
+                            </td>
+
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(application.Contact))
+                                {
+                                    <span class="text-secondary">
+                                        @application.Contact
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">—</span>
+                                }
+                            </td>
+
+                            <td>
+                                <span class="text-secondary">
+                                    @application.Notes
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                    Open
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- New Application Modal -->
+<div class="modal fade" id="newApplicationModal" tabindex="-1" aria-labelledby="newApplicationModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content hf-modal">
+
+            <div class="modal-header">
+                <h2 class="modal-title fs-5" id="newApplicationModalLabel">
+                    New Application
+                </h2>
+
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                @* New Application form will go here. *@
+            </div>
+
+        </div>
+
+    </div>
 </div>
