@@ -1,6 +1,4 @@
-/* --------------------------------
-   Tracker table
-   -------------------------------- */
+/* Tracker table */
 
 .hf-card {
   background-color: var(--hf-surface);
@@ -30,9 +28,7 @@
   white-space: nowrap;
 }
 
-/* --------------------------------
-   Status badges
-   -------------------------------- */
+/* Status badges */
 
 .hf-status {
   background-color: rgba(124, 92, 255, 0.15);
@@ -42,113 +38,8 @@
   border-radius: 6px;
 }
 
-/* --------------------------------
-   Modal
-   -------------------------------- */
-
-.hf-modal {
-  background-color: var(--hf-surface);
-  color: var(--hf-text);
-  border: 1px solid var(--hf-border);
-  border-radius: 12px;
-}
-
-.hf-modal .modal-header {
-  border-bottom-color: var(--hf-border);
-}
-
-.hf-modal .modal-footer {
-  border-top-color: var(--hf-border);
-}
-
-/* --------------------------------
-   Empty state
-   -------------------------------- */
+/* Empty state */
 
 .empty-state {
   color: var(--hf-text);
-}
-
-/* --------------------------------
-   Modal tabs (edit / details)
-   -------------------------------- */
-
-.hf-modal-tabs {
-  border-color: var(--hf-border);
-}
-
-.hf-modal-tabs .nav-link {
-  color: var(--hf-muted);
-  background-color: transparent;
-  border-color: transparent;
-}
-
-.hf-modal-tabs .nav-link:hover {
-  color: var(--hf-text);
-  border-color: var(--hf-border) var(--hf-border) var(--hf-border);
-}
-
-.hf-modal-tabs .nav-link.active {
-  color: var(--hf-text);
-  background-color: var(--hf-surface);
-  border-color: var(--hf-border) var(--hf-border) var(--hf-surface);
-}
-
-/* --------------------------------
-   Read-only detail rows (details modal)
-   -------------------------------- */
-
-.hf-detail-row {
-  margin-bottom: 1rem;
-}
-
-.hf-detail-label {
-  color: var(--hf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.25rem;
-}
-
-.hf-detail-value {
-  color: var(--hf-text);
-}
-
-.hf-jobdescription {
-  white-space: pre-wrap;
-}
-
-.hf-modal-main {
-  min-width: 0;
-}
-
-/* --------------------------------
-   Details modal action sidebar
-   -------------------------------- */
-
-.hf-modal-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-
-  flex: 0 0 auto;
-  width: 100%;
-}
-
-.hf-modal-actions-label {
-  color: var(--hf-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.15rem;
-}
-
-@media (min-width: 992px) {
-  .hf-modal-actions {
-    width: 220px;
-    padding-left: 1.5rem;
-    border-left: 1px solid var(--hf-border);
-  }
 }

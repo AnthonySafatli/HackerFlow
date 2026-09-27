@@ -1,6 +1,4 @@
-/* --------------------------------
-   Application pipeline
-   -------------------------------- */
+/* Application pipeline */
 
 .application-pipeline {
   display: flex;
@@ -105,9 +103,7 @@
   display: none;
 }
 
-/* --------------------------------
-   Small screens
-   -------------------------------- */
+/* Small screens */
 
 @media (max-width: 768px) {
   .pipeline-step {
