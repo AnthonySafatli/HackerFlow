@@ -3,7 +3,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
@@ -89,6 +89,8 @@
             </div>
         </div>
     </footer>
+
+    @await RenderSectionAsync("Modals", required: false)
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 

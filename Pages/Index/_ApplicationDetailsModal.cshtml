@@ -1,0 +1,187 @@
+@model HackerFlow.Models.JobApplication
+
+<div class="modal fade" id="detailsApplicationModal-@Model.Id" tabindex="-1"
+     aria-labelledby="detailsApplicationModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content hf-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsApplicationModalLabel-@Model.Id">
+                    @Model.Company — @Model.Role
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="d-flex flex-column flex-lg-row gap-4">
+
+                    <!-- Main content -->
+                    <div class="flex-grow-1 hf-modal-main">
+
+                        <ul class="nav nav-tabs hf-modal-tabs mb-3" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="details-tab-@Model.Id" data-bs-toggle="tab"
+                                        data-bs-target="#details-pane-@Model.Id" type="button" role="tab"
+                                        aria-controls="details-pane-@Model.Id" aria-selected="true">
+                                    Details
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="details-jobdesc-tab-@Model.Id" data-bs-toggle="tab"
+                                        data-bs-target="#details-jobdesc-pane-@Model.Id" type="button" role="tab"
+                                        aria-controls="details-jobdesc-pane-@Model.Id" aria-selected="false">
+                                    Job Description
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+
+                            <!-- Details tab -->
+                            <div class="tab-pane fade show active" id="details-pane-@Model.Id" role="tabpanel"
+                                 aria-labelledby="details-tab-@Model.Id">
+
+                                <div class="row">
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Company</div>
+                                        <div class="hf-detail-value">@Model.Company</div>
+                                    </div>
+
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Role</div>
+                                        <div class="hf-detail-value">@Model.Role</div>
+                                    </div>
+                                </div>
+
+                                <div class="hf-detail-row">
+                                    <div class="hf-detail-label">Job Posting URL</div>
+                                    <div class="hf-detail-value">
+                                        @if (!string.IsNullOrWhiteSpace(Model.Url))
+                                        {
+                                            <a href="@Model.Url" target="_blank" rel="noopener noreferrer">@Model.Url</a>
+                                        }
+                                        else
+                                        {
+                                            <span>—</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Status</div>
+                                        <div class="hf-detail-value">
+                                            <span class="badge hf-status">@Model.Status</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Method</div>
+                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Method) ? "—" : Model.Method)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Date Applied</div>
+                                        <div class="hf-detail-value">
+                                            @(Model.DateApplied.HasValue ? Model.DateApplied.Value.ToString("MMM d, yyyy") : "—")
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Follow-up Date</div>
+                                        <div class="hf-detail-value">
+                                            @(Model.FollowUpDate.HasValue ? Model.FollowUpDate.Value.ToString("MMM d, yyyy") : "—")
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="hf-detail-row">
+                                    <div class="hf-detail-label">Contact</div>
+                                    <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Contact) ? "—" : Model.Contact)</div>
+                                </div>
+
+                                <div class="hf-detail-row">
+                                    <div class="hf-detail-label">Notes</div>
+                                    <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Notes) ? "—" : Model.Notes)</div>
+                                </div>
+
+                                <hr class="border-secondary" />
+
+                                <div class="row">
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Resume</div>
+                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" : Model.ResumePath)</div>
+                                    </div>
+
+                                    <div class="col-md-6 hf-detail-row">
+                                        <div class="hf-detail-label">Cover Letter</div>
+                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" : Model.CoverLetterPath)</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Job description tab -->
+                            <div class="tab-pane fade" id="details-jobdesc-pane-@Model.Id" role="tabpanel"
+                                 aria-labelledby="details-jobdesc-tab-@Model.Id">
+
+                                @if (string.IsNullOrWhiteSpace(Model.JobDescription))
+                                {
+                                    <p class="text-secondary mb-0">No job description saved for this application.</p>
+                                }
+                                else
+                                {
+                                    <p class="hf-detail-value hf-jobdescription">@Model.JobDescription</p>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Action sidebar -->
+                    <div class="hf-modal-actions">
+                        <div class="hf-modal-actions-label">Actions</div>
+
+                        <button type="button" class="btn btn-hf-primary w-100">
+                            Generate Resume
+                        </button>
+
+                        <button type="button" class="btn btn-hf-primary w-100">
+                            Generate Cover Letter
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary w-100">
+                            Create Prompt
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
+                            Schedule Follow-up
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
+                            Log Interview Notes
+                        </button>
+
+                        <button type="button" class="btn btn-outline-danger w-100" disabled title="Coming soon">
+                            Archive Application
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#editApplicationModal-@Model.Id">
+                    Edit
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

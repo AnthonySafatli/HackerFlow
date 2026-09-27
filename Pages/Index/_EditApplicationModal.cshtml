@@ -1,0 +1,163 @@
+@model HackerFlow.Models.JobApplication
+
+<div class="modal fade" id="editApplicationModal-@Model.Id" tabindex="-1"
+     aria-labelledby="editApplicationModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content hf-modal">
+
+            <form asp-page="/Index" asp-page-handler="Update" method="post">
+
+                <input type="hidden" name="Application.Id" value="@Model.Id" />
+                <input type="hidden" name="Application.ResumePath" value="@Model.ResumePath" />
+                <input type="hidden" name="Application.CoverLetterPath" value="@Model.CoverLetterPath" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editApplicationModalLabel-@Model.Id">
+                        Edit Application — @Model.Company
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <ul class="nav nav-tabs hf-modal-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="edit-details-tab-@Model.Id" data-bs-toggle="tab"
+                                    data-bs-target="#edit-details-pane-@Model.Id" type="button" role="tab"
+                                    aria-controls="edit-details-pane-@Model.Id" aria-selected="true">
+                                Details
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="edit-jobdesc-tab-@Model.Id" data-bs-toggle="tab"
+                                    data-bs-target="#edit-jobdesc-pane-@Model.Id" type="button" role="tab"
+                                    aria-controls="edit-jobdesc-pane-@Model.Id" aria-selected="false">
+                                Job Description
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <!-- Details tab -->
+                        <div class="tab-pane fade show active" id="edit-details-pane-@Model.Id" role="tabpanel"
+                             aria-labelledby="edit-details-tab-@Model.Id">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-company-@Model.Id" class="form-label">Company</label>
+                                    <input type="text" class="form-control" id="editApp-company-@Model.Id"
+                                           name="Application.Company" value="@Model.Company" required />
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-role-@Model.Id" class="form-label">Role</label>
+                                    <input type="text" class="form-control" id="editApp-role-@Model.Id"
+                                           name="Application.Role" value="@Model.Role" required />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editApp-url-@Model.Id" class="form-label">Job Posting URL</label>
+                                <input type="url" class="form-control" id="editApp-url-@Model.Id"
+                                       name="Application.Url" value="@Model.Url" placeholder="https://" />
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-status-@Model.Id" class="form-label">Status</label>
+                                    <select class="form-select" id="editApp-status-@Model.Id" name="Application.Status">
+                                        @foreach (var status in new[] { "Bookmarked", "Applying", "Applied", "Interviewing", "Negotiating", "Accepted" })
+                                        {
+                                            <option value="@status" selected="@(Model.Status == status)">@status</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-method-@Model.Id" class="form-label">Method</label>
+                                    <input type="text" class="form-control" id="editApp-method-@Model.Id"
+                                           name="Application.Method" value="@Model.Method"
+                                           list="applicationMethods-@Model.Id" />
+                                    <datalist id="applicationMethods-@Model.Id">
+                                        <option value="Company site" />
+                                        <option value="LinkedIn" />
+                                        <option value="Referral" />
+                                        <option value="Job board" />
+                                        <option value="Email" />
+                                    </datalist>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-dateApplied-@Model.Id" class="form-label">Date Applied</label>
+                                    <input type="date" class="form-control" id="editApp-dateApplied-@Model.Id"
+                                           name="Application.DateApplied"
+                                           value="@(Model.DateApplied?.ToString("yyyy-MM-dd"))" />
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="editApp-followUpDate-@Model.Id" class="form-label">Follow-up Date</label>
+                                    <input type="date" class="form-control" id="editApp-followUpDate-@Model.Id"
+                                           name="Application.FollowUpDate"
+                                           value="@(Model.FollowUpDate?.ToString("yyyy-MM-dd"))" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editApp-contact-@Model.Id" class="form-label">Contact</label>
+                                <input type="text" class="form-control" id="editApp-contact-@Model.Id"
+                                       name="Application.Contact" value="@Model.Contact" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editApp-notes-@Model.Id" class="form-label">Notes</label>
+                                <textarea class="form-control" id="editApp-notes-@Model.Id"
+                                          name="Application.Notes" rows="3">@Model.Notes</textarea>
+                            </div>
+
+                            <hr class="border-secondary" />
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary">Resume</label>
+                                    <input type="text" class="form-control" disabled
+                                           value="@(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" : Model.ResumePath)" />
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary">Cover Letter</label>
+                                    <input type="text" class="form-control" disabled
+                                           value="@(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" : Model.CoverLetterPath)" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Job description tab -->
+                        <div class="tab-pane fade" id="edit-jobdesc-pane-@Model.Id" role="tabpanel"
+                             aria-labelledby="edit-jobdesc-tab-@Model.Id">
+
+                            <div class="mb-3">
+                                <label for="editApp-jobdesc-@Model.Id" class="form-label">Job Description</label>
+                                <textarea class="form-control" id="editApp-jobdesc-@Model.Id"
+                                          name="Application.JobDescription" rows="14">@Model.JobDescription</textarea>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Save Changes</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

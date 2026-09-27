@@ -18,7 +18,8 @@
             </p>
         </div>
 
-        <button type="button" id="newApplicationButton" class="btn btn-hf-primary px-4">
+        <button type="button" id="newApplicationButton" class="btn btn-hf-primary px-4"
+                data-bs-toggle="modal" data-bs-target="#newApplicationModal">
             New Application <span class="ms-1">+</span>
         </button>
     </div>
@@ -113,11 +114,13 @@
 
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary application-details">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary application-details"
+                                            data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                                         Open
                                     </button>
 
-                                    <button type="button" class="btn btn-sm btn-outline-secondary application-edit">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary application-edit"
+                                            data-bs-toggle="modal" data-bs-target="#editApplicationModal-@application.Id">
                                         Edit
                                     </button>
                                 </div>
@@ -129,7 +132,18 @@
 
         </div>
     </div>
+
 </div>
+
+@section Modals {
+    <partial name="_NewApplicationModal" />
+
+    @foreach (var application in Model.Applications)
+    {
+        <partial name="_EditApplicationModal" model="application" />
+        <partial name="_ApplicationDetailsModal" model="application" />
+    }
+}
 
 @section Styles {
     <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />

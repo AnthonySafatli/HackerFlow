@@ -14,6 +14,7 @@ public class IndexModel : PageModel
         [
             new JobApplication
             {
+                Id = 1,
                 Company = "Shopify",
                 Role = "Software Developer",
                 Url = "https://www.shopify.com/careers",
@@ -25,6 +26,7 @@ public class IndexModel : PageModel
             },
             new JobApplication
             {
+                Id = 2,
                 Company = "Microsoft",
                 Role = "Software Engineer",
                 Url = "https://careers.microsoft.com",
@@ -36,6 +38,7 @@ public class IndexModel : PageModel
             },
             new JobApplication
             {
+                Id = 3,
                 Company = "Amazon",
                 Role = "Backend Developer",
                 Url = "https://www.amazon.jobs",
@@ -47,6 +50,7 @@ public class IndexModel : PageModel
             },
             new JobApplication
             {
+                Id = 4,
                 Company = "Google",
                 Role = "Full Stack Engineer",
                 Url = "https://www.google.com/about/careers",
@@ -58,6 +62,7 @@ public class IndexModel : PageModel
             },
             new JobApplication
             {
+                Id = 5,
                 Company = "Nova Scotia Power",
                 Role = "Application Developer",
                 Url = "https://www.nspower.ca",
@@ -69,6 +74,7 @@ public class IndexModel : PageModel
             },
             new JobApplication
             {
+                Id = 6,
                 Company = "Clio",
                 Role = "Junior Software Developer",
                 Url = "https://www.clio.com/careers",
