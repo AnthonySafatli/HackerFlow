@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using HackerFlow.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HackerFlow.Pages;
+namespace HackerFlow.Pages.Index;
 
 public class IndexModel : PageModel
 {

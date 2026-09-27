@@ -1,0 +1,98 @@
+:root {
+  --hf-background: #0b1020;
+  --hf-surface: #121a2b;
+  --hf-surface-hover: #19243a;
+  --hf-border: #26334d;
+
+  --hf-primary: #7c5cff;
+  --hf-accent: #22d3a7;
+
+  --hf-text: #f5f7ff;
+  --hf-muted: #a7b0c5;
+
+  --hf-danger: #f87171;
+  --hf-warning: #fbbf24;
+}
+
+html,
+body {
+  background-color: var(--hf-background);
+  color: var(--hf-text);
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Navbar */
+
+.navbar {
+  background-color: var(--hf-background);
+  border-color: var(--hf-border) !important;
+}
+
+.navbar-brand {
+  color: var(--hf-text);
+}
+
+.navbar-brand:hover {
+  color: var(--hf-text);
+}
+
+.navbar-brand img {
+  border-radius: 9px;
+}
+
+.nav-link {
+  color: var(--hf-muted);
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: var(--hf-text);
+}
+
+.nav-link.active {
+  color: var(--hf-text);
+}
+
+/* Footer */
+
+footer {
+  border-color: var(--hf-border) !important;
+  background-color: var(--hf-background);
+}
+
+/* Bootstrap overrides */
+
+.text-secondary {
+  color: var(--hf-muted) !important;
+}
+
+.border {
+  border-color: var(--hf-border) !important;
+}
+
+.border-top,
+.border-bottom {
+  border-color: var(--hf-border) !important;
+}
+
+/* --------------------------------
+   HackerFlow buttons
+   -------------------------------- */
+
+.btn-hf-primary {
+  background-color: var(--hf-primary);
+  border-color: var(--hf-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn-hf-primary:hover,
+.btn-hf-primary:focus {
+  background-color: #6b4fe8;
+  border-color: #6b4fe8;
+  color: #fff;
+}

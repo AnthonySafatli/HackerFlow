@@ -1,0 +1,116 @@
+/* --------------------------------
+   Application pipeline
+   -------------------------------- */
+
+.application-pipeline {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.pipeline-step {
+  position: relative;
+
+  flex: 1 1 0;
+  min-width: 130px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 48px;
+  padding: 0 28px 0 38px;
+
+  background-color: var(--hf-surface);
+  color: var(--hf-muted);
+
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  border-top: 1px solid var(--hf-border);
+  border-bottom: 1px solid var(--hf-border);
+
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+/* Arrow on the right */
+.pipeline-step::after {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  right: -20px;
+
+  width: 0;
+  height: 0;
+
+  border-top: 24px solid transparent;
+  border-bottom: 24px solid transparent;
+  border-left: 20px solid var(--hf-surface);
+
+  z-index: 2;
+}
+
+/* Arrow border */
+.pipeline-step::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  right: -22px;
+
+  width: 0;
+  height: 0;
+
+  border-top: 24px solid transparent;
+  border-bottom: 24px solid transparent;
+  border-left: 20px solid var(--hf-border);
+
+  z-index: 1;
+}
+
+/* Account for the arrow overlap */
+.pipeline-step + .pipeline-step {
+  margin-left: 2px;
+}
+
+/* Hover */
+.pipeline-step:hover {
+  background-color: var(--hf-surface-hover);
+  color: var(--hf-text);
+}
+
+.pipeline-step:hover::after {
+  border-left-color: var(--hf-surface-hover);
+}
+
+/* Active */
+.pipeline-step.active {
+  background-color: var(--hf-primary);
+  color: #fff;
+  border-color: var(--hf-primary);
+}
+
+.pipeline-step.active::after {
+  border-left-color: var(--hf-primary);
+}
+
+/* Last segment */
+.pipeline-step.last::after,
+.pipeline-step.last::before {
+  display: none;
+}
+
+/* --------------------------------
+   Small screens
+   -------------------------------- */
+
+@media (max-width: 768px) {
+  .pipeline-step {
+    flex: 0 0 150px;
+  }
+}
