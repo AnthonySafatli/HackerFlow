@@ -18,7 +18,7 @@ public class JobApplication
 
     public string Method { get; set; } = "";
 
-    public string Status { get; set; } = "Bookmarked";
+    public ApplicationStatus Status { get; set; } = ApplicationStatus.Bookmarked;
 
     public string Contact { get; set; } = "";
 
@@ -27,4 +27,13 @@ public class JobApplication
     public string ResumePath { get; set; } = "";
 
     public string CoverLetterPath { get; set; } = "";
+}
+
+public enum ApplicationStatus
+{
+    Bookmarked,
+    Applied,
+    Interviewing,
+    Offered,
+    Rejected
 }

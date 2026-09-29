@@ -50,7 +50,7 @@
                 <tbody>
                     @foreach (var application in Model.Applications)
                     {
-                        <tr data-status="@application.Status.ToLowerInvariant()">
+                        <tr data-status="@application.Status.ToString().ToLowerInvariant()">
                             <td>
                                 <div class="fw-semibold">
                                     @application.Company
@@ -69,8 +69,8 @@
                             </td>
 
                             <td>
-                                <span class="badge hf-status hf-status-@application.Status.ToLowerInvariant()">
-                                    @application.Status
+                                <span class="badge hf-status hf-status-@application.Status.ToString().ToLowerInvariant()">
+                                    @application.Status.ToString()
                                 </span>
                             </td>
 

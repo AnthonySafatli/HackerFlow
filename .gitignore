@@ -433,3 +433,4 @@ FodyWeavers.xsd
 
 # Database files
 *.db
+*.db*
