@@ -9,4 +9,5 @@ public class HackerFlowContext : DbContext
         : base(options) { }
 
     public DbSet<JobApplication> Applications => Set<JobApplication>();
+    public DbSet<AppSetting> AppSettings => Set<AppSetting>();
 }
