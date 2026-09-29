@@ -17,7 +17,6 @@
 
                     <!-- Main content -->
                     <div class="flex-grow-1 hf-modal-main">
-
                         <ul class="nav nav-tabs hf-modal-tabs mb-3" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="details-tab-@Model.Id" data-bs-toggle="tab"
@@ -77,7 +76,9 @@
 
                                     <div class="col-md-6 hf-detail-row">
                                         <div class="hf-detail-label">Method</div>
-                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Method) ? "—" : Model.Method)</div>
+                                        <div class="hf-detail-value">
+                                            @(string.IsNullOrWhiteSpace(Model.Method) ? "—" : Model.Method)
+                                        </div>
                                     </div>
                                 </div>
 
@@ -99,89 +100,95 @@
 
                                 <div class="hf-detail-row">
                                     <div class="hf-detail-label">Contact</div>
-                                    <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Contact) ? "—" : Model.Contact)</div>
-                                </div>
-
-                                <div class="hf-detail-row">
-                                    <div class="hf-detail-label">Notes</div>
-                                    <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.Notes) ? "—" : Model.Notes)</div>
-                                </div>
-
-                                <hr class="border-secondary" />
-
-                                <div class="row">
-                                    <div class="col-md-6 hf-detail-row">
-                                        <div class="hf-detail-label">Resume</div>
-                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" : Model.ResumePath)</div>
+                                    <div class="hf-detail-value">
+                                        @(string.IsNullOrWhiteSpace(Model.Contact) ? "—" : Model.Contact)</div>
                                     </div>
 
-                                    <div class="col-md-6 hf-detail-row">
-                                        <div class="hf-detail-label">Cover Letter</div>
-                                        <div class="hf-detail-value">@(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" : Model.CoverLetterPath)</div>
+                                    <div class="hf-detail-row">
+                                        <div class="hf-detail-label">Notes</div>
+                                        <div class="hf-detail-value">
+                                            @(string.IsNullOrWhiteSpace(Model.Notes) ? "—" : Model.Notes)
+                                        </div>
                                     </div>
+
+                                    <hr class="border-secondary" />
+
+                                    <div class="row">
+                                        <div class="col-md-6 hf-detail-row">
+                                            <div class="hf-detail-label">Resume</div>
+                                            <div class="hf-detail-value">
+                                                @(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" :
+                                            Model.ResumePath)</div>
+                                            </div>
+
+                                            <div class="col-md-6 hf-detail-row">
+                                                <div class="hf-detail-label">Cover Letter</div>
+                                                <div class="hf-detail-value">
+                                                    @(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" :
+                                            Model.CoverLetterPath)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Job description tab -->
+                                        <div class="tab-pane fade" id="details-jobdesc-pane-@Model.Id" role="tabpanel"
+                                             aria-labelledby="details-jobdesc-tab-@Model.Id">
+
+                                            @if (string.IsNullOrWhiteSpace(Model.JobDescription))
+                                            {
+                                                <p class="text-secondary mb-0">No job description saved for this application.</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="hf-detail-value hf-jobdescription">@Model.JobDescription</p>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action sidebar -->
+                                <div class="hf-modal-actions">
+                                    <div class="hf-modal-actions-label">Actions</div>
+
+                                    <button type="button" class="btn btn-hf-primary w-100">
+                                        Generate Resume
+                                    </button>
+
+                                    <button type="button" class="btn btn-hf-primary w-100">
+                                        Generate Cover Letter
+                                    </button>
+
+                                    <button type="button" class="btn btn-outline-secondary w-100">
+                                        Create Prompt
+                                    </button>
+
+                                    <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
+                                        Schedule Follow-up
+                                    </button>
+
+                                    <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
+                                        Log Interview Notes
+                                    </button>
+
+                                    <button type="button" class="btn btn-outline-danger w-100" disabled title="Coming soon">
+                                        Archive Application
+                                    </button>
                                 </div>
 
                             </div>
-
-                            <!-- Job description tab -->
-                            <div class="tab-pane fade" id="details-jobdesc-pane-@Model.Id" role="tabpanel"
-                                 aria-labelledby="details-jobdesc-tab-@Model.Id">
-
-                                @if (string.IsNullOrWhiteSpace(Model.JobDescription))
-                                {
-                                    <p class="text-secondary mb-0">No job description saved for this application.</p>
-                                }
-                                else
-                                {
-                                    <p class="hf-detail-value hf-jobdescription">@Model.JobDescription</p>
-                                }
-
-                            </div>
-
                         </div>
 
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                                    data-bs-target="#editApplicationModal-@Model.Id">
+                                Edit
+                            </button>
+                        </div>
                     </div>
-
-                    <!-- Action sidebar -->
-                    <div class="hf-modal-actions">
-                        <div class="hf-modal-actions-label">Actions</div>
-
-                        <button type="button" class="btn btn-hf-primary w-100">
-                            Generate Resume
-                        </button>
-
-                        <button type="button" class="btn btn-hf-primary w-100">
-                            Generate Cover Letter
-                        </button>
-
-                        <button type="button" class="btn btn-outline-secondary w-100">
-                            Create Prompt
-                        </button>
-
-                        <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
-                            Schedule Follow-up
-                        </button>
-
-                        <button type="button" class="btn btn-outline-secondary w-100" disabled title="Coming soon">
-                            Log Interview Notes
-                        </button>
-
-                        <button type="button" class="btn btn-outline-danger w-100" disabled title="Coming soon">
-                            Archive Application
-                        </button>
-                    </div>
-
                 </div>
             </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
-                        data-bs-target="#editApplicationModal-@Model.Id">
-                    Edit
-                </button>
-            </div>
-
         </div>
     </div>
 </div>
