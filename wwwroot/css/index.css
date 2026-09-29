@@ -28,6 +28,10 @@
   white-space: nowrap;
 }
 
+.table tbody tr {
+  cursor: pointer;
+}
+
 /* Status badges */
 
 .hf-status {

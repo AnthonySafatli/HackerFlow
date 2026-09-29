@@ -50,7 +50,8 @@
                 <tbody>
                     @foreach (var application in Model.Applications)
                     {
-                        <tr data-status="@application.Status.ToString().ToLowerInvariant()">
+                        <tr data-status="@application.Status.ToString().ToLowerInvariant()" data-bs-toggle="modal"
+                            data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">
                                     @application.Company
@@ -114,12 +115,7 @@
 
                             <td class="text-end">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary application-details"
-                                            data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
-                                        Open
-                                    </button>
-
-                                    <button type="button" class="btn btn-sm btn-outline-secondary application-edit"
+                                    <button type="button" class="btn btn-outline-secondary application-edit"
                                             data-bs-toggle="modal" data-bs-target="#editApplicationModal-@application.Id">
                                         Edit
                                     </button>
