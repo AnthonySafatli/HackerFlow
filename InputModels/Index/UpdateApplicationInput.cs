@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using HackerFlow.Models;
 
+namespace HackerFlow.InputModels.Index;
+
 public class UpdateApplicationInput
 {
     [Required]

@@ -3,7 +3,7 @@ using HackerFlow.Models;
 using Microsoft.AspNetCore.Mvc;
 using HackerFlow.Data;
 using Microsoft.EntityFrameworkCore;
-using HackerFlow.InputModals.Index;
+using HackerFlow.InputModels.Index;
 
 namespace HackerFlow.Pages.Index;
 
