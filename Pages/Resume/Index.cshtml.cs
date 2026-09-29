@@ -43,6 +43,7 @@ public class IndexModel : PageModel
             Name = input.Name,
             Version = versionCount + 1,
             FilePath = "path/to/file", // TODO: Set the actual file path
+            Notes = input.Notes,
             CreatedAt = DateTime.UtcNow
         };
 

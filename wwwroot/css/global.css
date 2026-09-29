@@ -64,6 +64,36 @@ footer {
   background-color: var(--hf-background);
 }
 
+/* Tracker table */
+
+.hf-card {
+  background-color: var(--hf-surface);
+  border: 1px solid var(--hf-border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-dark {
+  --bs-table-bg: var(--hf-surface);
+  --bs-table-color: var(--hf-text);
+  --bs-table-border-color: var(--hf-border);
+  --bs-table-hover-bg: var(--hf-surface-hover);
+  --bs-table-hover-color: var(--hf-text);
+}
+
+.table > :not(caption) > * > * {
+  padding: 1rem;
+}
+
+.table thead th {
+  color: var(--hf-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
 /* Bootstrap overrides */
 
 .text-secondary {

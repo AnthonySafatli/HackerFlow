@@ -10,5 +10,7 @@ public class Resume
 
     public string FilePath { get; set; } = "";
 
+    public string Notes { get; set; } = "";
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
