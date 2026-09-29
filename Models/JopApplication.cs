@@ -31,9 +31,12 @@ public class JobApplication
 
 public enum ApplicationStatus
 {
-    Bookmarked,
-    Applied,
-    Interviewing,
-    Offered,
-    Rejected
+    Bookmarked = 0,
+    Applying = 1,
+    Applied = 2,
+    Interviewing = 3,
+    Offered = 4,
+    Rejected = 5,
+    Accepted = 6,
+    Archived = 7
 }
