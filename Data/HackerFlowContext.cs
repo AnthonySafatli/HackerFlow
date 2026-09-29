@@ -10,4 +10,5 @@ public class HackerFlowContext : DbContext
 
     public DbSet<JobApplication> Applications => Set<JobApplication>();
     public DbSet<AppSetting> AppSettings => Set<AppSetting>();
+    public DbSet<Resume> Resumes => Set<Resume>();
 }

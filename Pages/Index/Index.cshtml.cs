@@ -26,7 +26,7 @@ public class IndexModel : PageModel
         await LoadApplicationsAsync();
     }
 
-    public async Task<IActionResult> OnPostCreate([FromForm(Name = "CreateInput")] CreateApplicationInput input)
+    public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreateApplicationInput input)
     {
         if (!ModelState.IsValid)
         {
@@ -51,7 +51,7 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostUpdate([FromForm(Name = "UpdateInput")] UpdateApplicationInput input)
+    public async Task<IActionResult> OnPostUpdateAsync([FromForm(Name = "UpdateInput")] UpdateApplicationInput input)
     {
         if (!ModelState.IsValid)
         {
