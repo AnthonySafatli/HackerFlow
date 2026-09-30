@@ -79,7 +79,7 @@
                 <span class="fw-semibold">@group.Key</span>
                 <span class="small text-secondary">
                     @group.Count() @(group.Count() == 1 ? "version" : "versions")
-                    · latest v@latest.Version, @latest.CreatedAt.ToString("MMM d, yyyy")
+                    | latest @("v" + latest.Version) - @latest.CreatedAt.ToString("MMM d, yyyy")
                 </span>
             </button>
 
@@ -99,7 +99,7 @@
                             @foreach (var resume in group)
                             {
                                 <tr>
-                                    <td><span class="fw-medium">v@resume.Version</span></td>
+                                    <td><span class="fw-medium">@("v" + resume.Version)</span></td>
                                     <td>
                                         <form method="post" asp-page-handler="Open" asp-route-id="@resume.Id" class="d-inline">
                                             <button type="submit"
@@ -113,8 +113,8 @@
                                     <td><span class="text-secondary">@resume.Notes</span></td>
                                     <td class="text-end">
                                         <form method="post" asp-page-handler="Delete" asp-route-id="@resume.Id" class="d-inline"
-                                              onsubmit="return confirm('Delete @resume.Name v@resume.Version?');">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                              onsubmit="return confirm('Delete @resume.Name @("v" + resume.Version)?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

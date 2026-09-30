@@ -79,7 +79,7 @@
                 <span class="fw-semibold">@group.Key</span>
                 <span class="small text-secondary">
                     @group.Count() @(group.Count() == 1 ? "version" : "versions")
-                    · latest v@latest.Version, @latest.CreatedAt.ToString("MMM d, yyyy")
+                    | latest @("v" + latest.Version) - @latest.CreatedAt.ToString("MMM d, yyyy")
                 </span>
             </button>
 
@@ -99,7 +99,7 @@
                             @foreach (var coverLetter in group)
                             {
                                 <tr>
-                                    <td><span class="fw-medium">v@coverLetter.Version</span></td>
+                                    <td><span class="fw-medium">@("v" + coverLetter.Version)</span></td>
                                     <td>
                                         <form method="post" asp-page-handler="Open" asp-route-id="@coverLetter.Id"
                                               class="d-inline">
@@ -115,8 +115,8 @@
                                     <td class="text-end">
                                         <form method="post" asp-page-handler="Delete" asp-route-id="@coverLetter.Id"
                                               class="d-inline"
-                                              onsubmit="return confirm('Delete @coverLetter.Name v@coverLetter.Version?');">
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                              onsubmit="return confirm('Delete @coverLetter.Name @("v" + coverLetter.Version)?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -130,7 +130,8 @@
 </div>
 
 @section Modals {
-    <partial name="_NewCoverLetterModal" model="Model.CoverLetters.Select(r => r.Name).Distinct(StringComparer.OrdinalIgnoreCase)" />
+    <partial name="_NewCoverLetterModal"
+             model="Model.CoverLetters.Select(r => r.Name).Distinct(StringComparer.OrdinalIgnoreCase)" />
 }
 
 @section Styles {
