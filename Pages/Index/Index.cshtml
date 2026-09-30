@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using HackerFlow.ViewModels
 @model IndexModel
 
 @{
@@ -133,8 +134,15 @@
 
     @foreach (var application in Model.Applications)
     {
+        var vm = new ApplicaitonDetailsModalVM
+        {
+            JobApplicaiton = application,
+            ResumeGroups = Model.ResumeGroups,
+            CoverLetterGroups = Model.CoverLetterGroups,
+        };
+
         <partial name="_EditApplicationModal" model="application" />
-        <partial name="_ApplicationDetailsModal" model="application" />
+        <partial name="_ApplicationDetailsModal" model="vm" />
     }
 }
 

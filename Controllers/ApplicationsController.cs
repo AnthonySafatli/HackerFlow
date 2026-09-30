@@ -32,4 +32,10 @@ public class ApplicationsController : ControllerBase
     {
         return Ok();
     }
+
+    [Route("create-application-package")]
+    public async Task<IActionResult> CreateApplicationPacakge()
+    {
+        return Ok();
+    }
 }
