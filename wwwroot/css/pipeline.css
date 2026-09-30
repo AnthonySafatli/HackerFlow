@@ -77,24 +77,29 @@
 }
 
 /* Hover */
-.pipeline-step:hover {
+.pipeline-step:not(.active):hover {
   background-color: var(--hf-surface-hover);
-  color: var(--hf-text);
+  color: var(--status-color);
 }
 
-.pipeline-step:hover::after {
+.pipeline-step:not(.active):hover::after {
   border-left-color: var(--hf-surface-hover);
 }
 
 /* Active */
 .pipeline-step.active {
-  background-color: var(--hf-primary);
+  background-color: var(--status-color);
+  border-color: var(--status-color);
   color: #fff;
-  border-color: var(--hf-primary);
 }
 
-.pipeline-step.active::after {
-  border-left-color: var(--hf-primary);
+.pipeline-step.active::after,
+.pipeline-step.active::before {
+  border-left-color: var(--status-color);
+}
+
+.pipeline-step.active span::before {
+  background-color: #fff; /* dot turns white on the coloured background */
 }
 
 /* Last segment */
@@ -109,4 +114,59 @@
   .pipeline-step {
     flex: 0 0 150px;
   }
+}
+
+/* Status colours: single source of truth */
+.pipeline-step[data-status="all"] {
+  --status-color: var(--hf-primary);
+}
+.pipeline-step[data-status="bookmarked"],
+.hf-status-bookmarked {
+  --status-color: #94a3b8;
+}
+.pipeline-step[data-status="applying"],
+.hf-status-applying {
+  --status-color: #38bdf8;
+}
+.pipeline-step[data-status="applied"],
+.hf-status-applied {
+  --status-color: #6366f1;
+}
+.pipeline-step[data-status="interviewing"],
+.hf-status-interviewing {
+  --status-color: #f59e0b;
+}
+.pipeline-step[data-status="offered"],
+.hf-status-offered {
+  --status-color: #a855f7;
+}
+.pipeline-step[data-status="accepted"],
+.hf-status-accepted {
+  --status-color: #22c55e;
+}
+.pipeline-step[data-status="rejected"],
+.hf-status-rejected {
+  --status-color: #ef4444;
+}
+.pipeline-step[data-status="archived"],
+.hf-status-archived {
+  --status-color: #64748b;
+}
+
+/* Badge */
+.hf-status {
+  color: var(--status-color);
+  background-color: color-mix(in srgb, var(--status-color) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-color) 40%, transparent);
+}
+
+/* Pipeline: coloured dot on inactive steps */
+.pipeline-step span::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background-color: var(--status-color);
 }

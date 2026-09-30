@@ -73,7 +73,10 @@
                                     <div class="col-md-6 hf-detail-row">
                                         <div class="hf-detail-label">Status</div>
                                         <div class="hf-detail-value">
-                                            <span class="badge hf-status">@Model.JobApplicaiton.Status</span>
+                                            <span
+                                                class="badge hf-status hf-status-@Model.JobApplicaiton.Status.ToString().ToLowerInvariant()">
+                                                @Model.JobApplicaiton.Status
+                                            </span>
                                         </div>
                                     </div>
 
