@@ -27,7 +27,7 @@
 
                 <div class="hf-detail-row">
                     <div class="hf-detail-label">Prompt</div>
-                    <p class="hf-detail-value hf-jobdescription mb-0">@Model.PromptString</p>
+                    <pre class="hf-prompt-box mb-0">@Model.PromptString</pre>
                 </div>
             </div>
 
@@ -37,6 +37,10 @@
                         data-bs-target="#editPromptModal-@Model.Id">
                     Edit
                 </button>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Id" class="d-inline"
+                      onsubmit="return confirm('Delete @Model.Name?');">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
         </div>
     </div>

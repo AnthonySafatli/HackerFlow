@@ -50,7 +50,7 @@
                 <tbody>
                     @foreach (var application in Model.Applications)
                     {
-                        <tr data-status="@application.Status.ToString().ToLowerInvariant()" data-bs-toggle="modal"
+                        <tr class="pointer" data-status="@application.Status.ToString().ToLowerInvariant()" data-bs-toggle="modal"
                             data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">

@@ -42,7 +42,7 @@
                     <tbody>
                         @foreach (var prompt in Model.Prompts)
                         {
-                            <tr data-bs-toggle="modal" data-bs-target="#detailsPromptModal-@prompt.Id">
+                            <tr class="pointer" data-bs-toggle="modal" data-bs-target="#detailsPromptModal-@prompt.Id">
                                 <td>
                                     <div class="fw-medium">@prompt.Name</div>
                                     <div class="small text-secondary">@prompt.Description</div>
@@ -60,7 +60,7 @@
 
                                     <form method="post" asp-page-handler="Delete" asp-route-id="@prompt.Id" class="d-inline"
                                           onsubmit="return confirm('Delete @prompt.Name?');">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -84,4 +84,5 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/prompt.css" asp-append-version="true" />
 }

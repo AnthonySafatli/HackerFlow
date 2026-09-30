@@ -37,7 +37,7 @@ public class IndexModel : PageModel
         await LoadProperties();
     }
 
-    public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreateApplicationInput input)
+    public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreatePromptInput input)
     {
         if (!ModelState.IsValid)
         {

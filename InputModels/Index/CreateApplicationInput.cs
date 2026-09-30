@@ -3,7 +3,7 @@ using HackerFlow.Models;
 
 namespace HackerFlow.InputModels.Index;
 
-public class CreateApplicationInput
+public class CreatePromptInput
 {
     [Required] 
     public string Company { get; set; } = "";

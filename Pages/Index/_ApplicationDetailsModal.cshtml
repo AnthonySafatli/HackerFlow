@@ -249,7 +249,8 @@
 
                             <form asp-page-handler="Delete" method="post">
                                 <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
-                                <button type="submit" class="btn btn-danger w-100">
+                                <button type="submit" class="btn btn-danger w-100"
+                                        onsubmit="return confirm('Delete @Model.JobApplicaiton.Company | @Model.JobApplicaiton.Role?');">
                                     Delete Application
                                 </button>
                             </form>
