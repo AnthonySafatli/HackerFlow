@@ -24,6 +24,10 @@ body {
   min-height: 100vh;
 }
 
+.icon-white {
+  filter: invert(1);
+}
+
 /* Navbar */
 
 .navbar {

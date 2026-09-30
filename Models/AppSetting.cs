@@ -2,6 +2,9 @@ namespace HackerFlow.Models;
 
 public class AppSetting
 {
+    public const string ResumeFolder = "ResumePath";
+    public const string GerenatedResumeFolder = "GeneratedResumePath";
+
     public int Id { get; set; }
 
     public string Name { get; set; } = "";
