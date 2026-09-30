@@ -1,0 +1,25 @@
+@model HackerFlow.ViewModels.ActionDropdownVM
+
+<div class="dropdown">
+    <button class="btn @Model.CssClass w-100 dropdown-toggle hf-dropdown-btn" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false"
+            disabled="@(!Model.Items.Any())">
+        <span class="hf-action-label">@Model.Label</span>
+        <span class="hf-action-spinner spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+        <span class="hf-action-ok d-none text-success" aria-hidden="true">✓</span>
+        <span class="hf-action-fail d-none text-danger" aria-hidden="true">✕</span>
+    </button>
+    <ul class="dropdown-menu">
+        @foreach (var item in Model.Items)
+        {
+            <li>
+                <a class="dropdown-item hf-dropdown-item" href="#"
+                   data-action-url="@Model.Url"
+                   data-action-method="@Model.Method"
+                   data-handler="@Model.Handler"
+                   data-param-name="@Model.ParamName"
+                   data-value="@item">@item</a>
+            </li>
+        }
+    </ul>
+</div>

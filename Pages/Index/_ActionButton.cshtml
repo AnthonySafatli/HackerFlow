@@ -1,0 +1,12 @@
+@model HackerFlow.ViewModels.ActionButtonVM
+
+<button type="button" class="btn @Model.CssClass w-100 hf-action-btn"
+        data-action-url="@Model.Url"
+        data-action-method="@Model.Method"
+        data-handler="@Model.Handler"
+        disabled="@Model.Disabled">
+    <span class="hf-action-label">@Model.Label</span>
+    <span class="hf-action-spinner spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+    <span class="hf-action-ok d-none text-success" aria-hidden="true">✓</span>
+    <span class="hf-action-fail d-none text-danger" aria-hidden="true">✕</span>
+</button>

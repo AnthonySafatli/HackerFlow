@@ -1,3 +1,4 @@
+@using HackerFlow.ViewModels
 @model HackerFlow.ViewModels.ApplicaitonDetailsModalVM;
 
 <div class="modal fade" id="detailsApplicationModal-@Model.JobApplicaiton.Id" tabindex="-1"
@@ -162,52 +163,55 @@
                                 <div class="hf-modal-actions">
                                     <div class="hf-modal-actions-label">Actions</div>
 
-                                    <div class="dropdown">
-                                        <button class="btn btn-hf-primary w-100 dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false"
-                                                disabled="@(Model.ResumeGroups.Count == 0)">
-                                            Generate Resume
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            @foreach (var resumeGroup in Model.ResumeGroups)
-                                            {
-                                                <li><a class="dropdown-item" href="#">@resumeGroup</a></li>
-                                            }
-                                        </ul>
-                                    </div>
+                                    <partial name="_ActionDropdown" model="@(new ActionDropdownVM
+                                             {
+                                                 CssClass = "btn-hf-primary",
+                                                 Label = " Generate Resume",
+                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-resume",
+                                                 Items = Model.ResumeGroups,
+                                                 Handler = "resumeGenerated"
+                                             })" />
 
-                                    <div class="dropdown">
-                                        <button class="btn btn-hf-primary w-100 dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown" aria-expanded="false"
-                                                disabled="@(Model.CoverLetterGroups.Count == 0)">
-                                            Generate Cover Letter
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            @foreach (var coverLetterGroup in Model.CoverLetterGroups)
-                                            {
-                                                <li><a class="dropdown-item" href="#">@coverLetterGroup</a></li>
-                                            }
-                                        </ul>
-                                    </div>
+                                    <partial name="_ActionDropdown" model="@(new ActionDropdownVM
+                                             {
+                                                 CssClass = "btn-hf-primary",
+                                                 Label = " Generate Cover Letter",
+                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-cover-letter",
+                                                 Items = Model.CoverLetterGroups,
+                                                 Handler = "coverLetterGenerated"
+                                             })" />
 
                                     <br />
 
-                                    <button type="button" class="btn btn-outline-secondary w-100">
-                                        Copy Prompt
-                                    </button>
+                                    <partial name="_ActionButton" model="@(new ActionButtonVM
+                                             {
+                                                 CssClass = "btn-outline-secondary",
+                                                 Label = " Copy Prompt",
+                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-prompt",
+                                                 Handler = "copyPrompt"
+                                             })" />
 
                                     <form asp-page-handler="ContinuePipeline" method="post">
                                         <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
                                         <button type="submit" class="btn btn-outline-secondary w-100"
                                                 disabled="@((int)Model.JobApplicaiton.Status >= 5)">
-                                            @* TODO: Make this text dynamic so it says what the action is *@
-                                            Continue Pipeline
+                                            @if ((int)Model.JobApplicaiton.Status >= 5)
+                                            {
+                                                @("Continue Pipeline")
+                                            }
+                                            else
+                                            {
+                                                @("Mark as " + (Model.JobApplicaiton.Status + 1).ToString())
+                                            }
                                         </button>
                                     </form>
 
-                                    <button type="button" class="btn btn-outline-secondary w-100">
-                                        Create Application Package
-                                    </button>
+                                    <partial name="_ActionButton" model="@(new ActionButtonVM
+                                             {
+                                                 CssClass = "btn-outline-secondary",
+                                                 Label = " Create Application Package",
+                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-application-package"
+                                             })" />
 
                                     <br />
 

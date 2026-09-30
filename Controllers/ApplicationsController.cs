@@ -15,26 +15,26 @@ public class ApplicationsController : ControllerBase
         _context = context;
     }
 
-    [Route("generate-resume")]
-    public async Task<IActionResult> GenerateResume()
+    [Route("{id}/generate-resume")]
+    public async Task<IActionResult> GenerateResume(int id, string group)
     {
         return Ok();
     }
 
-    [Route("generate-cover-letter")]
-    public async Task<IActionResult> GenerateCoverLetter()
+    [Route("{id}/generate-cover-letter")]
+    public async Task<IActionResult> GenerateCoverLetter(int id, string group)
     {
         return Ok();
     }
-
-    [Route("create-prompt")]
-    public async Task<IActionResult> CreatePrompt()
+    
+    [HttpPost("{id}/create-prompt")]
+    public async Task<IActionResult> CreatePrompt(int id)
     {
-        return Ok();
+        return Ok(new { prompt = "Test" });
     }
 
-    [Route("create-application-package")]
-    public async Task<IActionResult> CreateApplicationPacakge()
+    [Route("{id}/create-application-package")]
+    public async Task<IActionResult> CreateApplicationPacakge(int id)
     {
         return Ok();
     }
