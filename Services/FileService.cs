@@ -9,10 +9,6 @@ public class FileService : IFileService
     /// <summary>
     /// Saves a stream to a file, creating the directory if needed. Overwrites any existing file.
     /// </summary>
-    /// <param name="directory">Target directory. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <param name="content">Stream whose contents are written to the file.</param>
-    /// <returns>The full path of the saved file.</returns>
     public async Task<string> SaveAsync(string directory, string fileName, Stream content)
     {
         var path = BuildPath(directory, fileName);
@@ -22,12 +18,24 @@ public class FileService : IFileService
     }
 
     /// <summary>
+    /// Saves a stream directly to the specified path. Creates the parent directory if needed.
+    /// </summary>
+    public async Task<string> SaveAsync(string path, Stream content)
+    {
+        var fullPath = Resolve(path);
+        var directory = Path.GetDirectoryName(fullPath);
+
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
+        await using var stream = File.Create(fullPath);
+        await content.CopyToAsync(stream);
+        return fullPath;
+    }
+
+    /// <summary>
     /// Saves a byte array to a file, creating the directory if needed. Overwrites any existing file.
     /// </summary>
-    /// <param name="directory">Target directory. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <param name="content">Bytes to write to the file.</param>
-    /// <returns>The full path of the saved file.</returns>
     public async Task<string> SaveAsync(string directory, string fileName, byte[] content)
     {
         var path = BuildPath(directory, fileName);
@@ -36,11 +44,23 @@ public class FileService : IFileService
     }
 
     /// <summary>
+    /// Saves a byte array directly to the specified path. Creates the parent directory if needed.
+    /// </summary>
+    public async Task<string> SaveAsync(string path, byte[] content)
+    {
+        var fullPath = Resolve(path);
+        var directory = Path.GetDirectoryName(fullPath);
+
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
+        await File.WriteAllBytesAsync(fullPath, content);
+        return fullPath;
+    }
+
+    /// <summary>
     /// Gets the full path of an existing file without creating any directories.
     /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns>The full path if the file exists; otherwise <c>null</c>.</returns>
     public string? GetPath(string directory, string fileName)
     {
         var path = BuildPath(directory, fileName, create: false);
@@ -48,11 +68,17 @@ public class FileService : IFileService
     }
 
     /// <summary>
+    /// Gets the full path of an existing file from its complete path.
+    /// </summary>
+    public string? GetPath(string path)
+    {
+        var fullPath = Resolve(path);
+        return File.Exists(fullPath) ? fullPath : null;
+    }
+
+    /// <summary>
     /// Reads all bytes of a file.
     /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns>The file's bytes, or <c>null</c> if the file doesn't exist.</returns>
     public async Task<byte[]?> ReadAsync(string directory, string fileName)
     {
         var path = GetPath(directory, fileName);
@@ -60,47 +86,90 @@ public class FileService : IFileService
     }
 
     /// <summary>
-    /// Lists the names of all files directly inside a directory (non-recursive).
+    /// Reads all bytes of a file from its complete path.
     /// </summary>
-    /// <param name="directory">Directory to list. Supports "~" for the user's home folder.</param>
-    /// <returns>File names only (not full paths). Empty if the directory doesn't exist.</returns>
+    public async Task<byte[]?> ReadAsync(string path)
+    {
+        var fullPath = GetPath(path);
+        return fullPath == null ? null : await File.ReadAllBytesAsync(fullPath);
+    }
+
+    /// <summary>
+    /// Lists the names of all files directly inside a directory (non-recursive).
+    /// The directory may be relative, absolute, or "~"-prefixed.
+    /// </summary>
     public IEnumerable<string> List(string directory)
     {
         var dir = Resolve(directory);
+
         return Directory.Exists(dir)
             ? Directory.EnumerateFiles(dir)
-                .Select((string? path) => Path.GetFileName(path) ?? "")!
+                .Select((string? path) => Path.GetFileName(path) ?? "")
+                .Where(name => name != null)
             : [];
     }
 
     /// <summary>
     /// Checks whether a file exists in a directory.
     /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns><c>true</c> if the file exists; otherwise <c>false</c>.</returns>
     public bool Exists(string directory, string fileName) =>
         File.Exists(BuildPath(directory, fileName, create: false));
 
     /// <summary>
+    /// Checks whether a file exists at the specified complete path.
+    /// </summary>
+    public bool Exists(string path) =>
+        File.Exists(Resolve(path));
+
+    /// <summary>
     /// Deletes a file if it exists.
     /// </summary>
-    /// <param name="directory">Directory containing the file. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns><c>true</c> if the file was deleted; <c>false</c> if it didn't exist.</returns>
     public bool Delete(string directory, string fileName)
     {
         var path = BuildPath(directory, fileName, create: false);
-        if (!File.Exists(path)) return false;
+
+        if (!File.Exists(path))
+            return false;
+
         File.Delete(path);
         return true;
     }
 
     /// <summary>
+    /// Deletes a file by its complete path.
+    /// </summary>
+    public bool Delete(string path)
+    {
+        var fullPath = Resolve(path);
+
+        if (!File.Exists(fullPath))
+            return false;
+
+        File.Delete(fullPath);
+        return true;
+    }
+
+    public async Task<string?> MoveAsync(
+    string sourcePath,
+    string destinationDirectory,
+    string? destinationFileName = null)
+    {
+        var source = Resolve(sourcePath);
+
+        if (!File.Exists(source))
+            return null;
+
+        var fileName = destinationFileName ?? Path.GetFileName(source);
+        var destination = BuildPath(destinationDirectory, fileName);
+
+        File.Move(source, destination, overwrite: true);
+
+        return destination;
+    }
+
+    /// <summary>
     /// Expands a leading "~" to the user's home folder and returns the full absolute path.
     /// </summary>
-    /// <param name="path">A relative, absolute, or "~"-prefixed path.</param>
-    /// <returns>The resolved absolute path.</returns>
     private static string Resolve(string path)
     {
         if (path.StartsWith("~"))
@@ -108,21 +177,24 @@ public class FileService : IFileService
             var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             path = Path.Combine(home, path[1..].TrimStart('/', '\\'));
         }
+
         return Path.GetFullPath(path);
     }
 
     /// <summary>
     /// Builds the full file path, stripping directory parts from <paramref name="fileName"/>
-    /// to block path traversal (e.g. "../../secret.txt" becomes "secret.txt").
+    /// to block path traversal.
     /// </summary>
-    /// <param name="directory">Target directory. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <param name="create">If <c>true</c>, creates the directory when it doesn't exist.</param>
-    /// <returns>The full path to the file.</returns>
-    private static string BuildPath(string directory, string fileName, bool create = true)
+    private static string BuildPath(
+        string directory,
+        string fileName,
+        bool create = true)
     {
         var dir = Resolve(directory);
-        if (create) Directory.CreateDirectory(dir);
+
+        if (create)
+            Directory.CreateDirectory(dir);
+
         return Path.Combine(dir, Path.GetFileName(fileName));
     }
 }
@@ -132,60 +204,34 @@ public class FileService : IFileService
 /// </summary>
 public interface IFileService
 {
-    /// <summary>
-    /// Saves a stream to a file, creating the directory if needed. Overwrites any existing file.
-    /// </summary>
-    /// <param name="directory">Target directory. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <param name="content">Stream whose contents are written to the file.</param>
-    /// <returns>The full path of the saved file.</returns>
     Task<string> SaveAsync(string directory, string fileName, Stream content);
 
-    /// <summary>
-    /// Saves a byte array to a file, creating the directory if needed. Overwrites any existing file.
-    /// </summary>
-    /// <param name="directory">Target directory. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <param name="content">Bytes to write to the file.</param>
-    /// <returns>The full path of the saved file.</returns>
+    Task<string> SaveAsync(string path, Stream content);
+
     Task<string> SaveAsync(string directory, string fileName, byte[] content);
 
-    /// <summary>
-    /// Gets the full path of an existing file without creating any directories.
-    /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns>The full path if the file exists; otherwise <c>null</c>.</returns>
+    Task<string> SaveAsync(string path, byte[] content);
+
     string? GetPath(string directory, string fileName);
 
-    /// <summary>
-    /// Reads all bytes of a file.
-    /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns>The file's bytes, or <c>null</c> if the file doesn't exist.</returns>
+    string? GetPath(string path);
+
     Task<byte[]?> ReadAsync(string directory, string fileName);
 
-    /// <summary>
-    /// Lists the names of all files directly inside a directory (non-recursive).
-    /// </summary>
-    /// <param name="directory">Directory to list. Supports "~" for the user's home folder.</param>
-    /// <returns>File names only (not full paths). Empty if the directory doesn't exist.</returns>
+    Task<byte[]?> ReadAsync(string path);
+
     IEnumerable<string> List(string directory);
 
-    /// <summary>
-    /// Checks whether a file exists in a directory.
-    /// </summary>
-    /// <param name="directory">Directory to look in. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns><c>true</c> if the file exists; otherwise <c>false</c>.</returns>
     bool Exists(string directory, string fileName);
 
-    /// <summary>
-    /// Deletes a file if it exists.
-    /// </summary>
-    /// <param name="directory">Directory containing the file. Supports "~" for the user's home folder.</param>
-    /// <param name="fileName">Name of the file. Any directory parts are stripped.</param>
-    /// <returns><c>true</c> if the file was deleted; <c>false</c> if it didn't exist.</returns>
+    bool Exists(string path);
+
     bool Delete(string directory, string fileName);
+
+    bool Delete(string path);
+
+    Task<string?> MoveAsync(
+        string sourcePath, 
+        string destinationDirectory, 
+        string? destinationFileName = null);
 }

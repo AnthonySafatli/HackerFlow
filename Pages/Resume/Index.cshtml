@@ -13,8 +13,8 @@
             <p class="text-secondary mb-0">Store all versions of your resume.</p>
         </div>
 
-        <button type="button" id="newApplicationButton" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
-                data-bs-target="#newApplicationModal">
+        <button type="button" id="newResumeButton" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
+                data-bs-target="#newResumeModal">
             New Resume <span class="ms-1">+</span>
         </button>
     </div>
@@ -126,3 +126,11 @@
         </div>
     }
 </div>
+
+@section Modals {
+    <partial name="_NewResumeModal" model="Model.Resumes.Select(r => r.Name).Distinct(StringComparer.OrdinalIgnoreCase)" />
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+}
