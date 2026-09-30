@@ -13,8 +13,3 @@ public class AppSetting
 
     public string Value { get; set; } = "";
 }
-
-/*
-Needed Settings
-- Prompt: The prompt used for generating for AI generated cover letter
-*/
