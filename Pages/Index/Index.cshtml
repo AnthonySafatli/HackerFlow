@@ -25,7 +25,7 @@
     </div>
 
     <!-- Application pipeline -->
-    <partial name="_ApplicationPipeline" />
+    <partial name="_ApplicationPipeline" model="Model.Applications.Select(x => x.Status.ToString()).ToList()" />
 
     <!-- Applications table -->
     <div class="card hf-card">
@@ -50,8 +50,8 @@
                 <tbody>
                     @foreach (var application in Model.Applications)
                     {
-                        <tr class="pointer" data-status="@application.Status.ToString().ToLowerInvariant()" data-bs-toggle="modal"
-                            data-bs-target="#detailsApplicationModal-@application.Id">
+                        <tr class="pointer" data-status="@application.Status.ToString().ToLowerInvariant()"
+                            data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">
                                     @application.Company

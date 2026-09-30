@@ -83,18 +83,19 @@
     <footer class="border-top py-3 mt-auto">
         <div class="container-fluid px-4">
             <div class="d-flex justify-content-center align-items-center small text-secondary gap-2">
-                <span>HackerFlow</span> |
-                <span>v0.1.0</span> |
-                <span>&copy; @DateTime.Now.Year</span>
+                <span><strong>HackerFlow</strong></span> <strong>|</strong>
+                <span>An Application by <strong>Anthony Safatli</strong></span> <strong>|</strong>
+                <span>v0.1.0/span> <strong>|</strong>
+                    <span>&copy; @DateTime.Now.Year</span>
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    @await RenderSectionAsync("Modals", required: false)
+        @await RenderSectionAsync("Modals", required: false)
 
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 
 </html>

@@ -1,4 +1,14 @@
+@using System.Net
+@using System.Text.RegularExpressions
 @model HackerFlow.Models.Prompt
+
+@{
+    var encoded = WebUtility.HtmlEncode(Model.PromptString ?? "");
+    var highlighted = Regex.Replace(
+        encoded,
+        @"\{\{(.+?)\}\}",
+        m => $"<span class=\"hf-placeholder\">{m.Value}</span>");
+}
 
 <div class="modal fade" id="detailsPromptModal-@Model.Id" tabindex="-1"
      aria-labelledby="detailsPromptModalLabel-@Model.Id" aria-hidden="true">
@@ -27,7 +37,7 @@
 
                 <div class="hf-detail-row">
                     <div class="hf-detail-label">Prompt</div>
-                    <pre class="hf-prompt-box mb-0">@Model.PromptString</pre>
+                    <pre class="hf-prompt-box mb-0">@Html.Raw(highlighted)</pre>
                 </div>
             </div>
 

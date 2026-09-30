@@ -92,3 +92,13 @@
     border-left: 1px solid var(--hf-border);
   }
 }
+
+/* Scrolling */
+
+.modal-dialog-scrollable .modal-content > form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}

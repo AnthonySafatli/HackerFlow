@@ -1,37 +1,39 @@
+@model List<string>
+
 <div class="application-pipeline mb-4">
     <a href="#" class="pipeline-step active" data-status="all">
-        <span>All</span>
+        <span>All (@(Model.Count))</span>
     </a>
 
     <a href="#" class="pipeline-step" data-status="bookmarked">
-        <span>Bookmarked</span>
+        <span>Bookmarked (@Model.Count(x => x == "Bookmarked"))</span>
     </a>
 
     <a href="#" class="pipeline-step" data-status="applying">
-        <span>Applying</span>
+        <span>Applying (@Model.Count(x => x == "Applying"))</span>
     </a>
 
     <a href="#" class="pipeline-step" data-status="applied">
-        <span>Applied</span>
+        <span>Applied (@Model.Count(x => x == "Applied"))</span>
     </a>
 
     <a href="#" class="pipeline-step" data-status="interviewing">
-        <span>Interviewing</span>
+        <span>Interviewing (@Model.Count(x => x == "Interviewing"))</span>
     </a>
 
     <a href="#" class="pipeline-step" data-status="offered">
-        <span>Offered</span>
+        <span>Offered (@Model.Count(x => x == "Offered"))</span>
     </a>
 
     <a href="#" class="pipeline-step last" data-status="accepted">
-        <span>Accepted</span>
+        <span>Accepted (@Model.Count(x => x == "Accepted"))</span>
     </a>
 
     <a href="#" class="pipeline-step last" data-status="rejected">
-        <span>Rejected</span>
+        <span>Rejected (@Model.Count(x => x == "Rejected"))</span>
     </a>
 
     <a href="#" class="pipeline-step last" data-status="archived">
-        <span>Archived</span>
+        <span>Archived (@Model.Count(x => x == "Archived"))</span>
     </a>
 </div>

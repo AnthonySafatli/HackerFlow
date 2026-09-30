@@ -15,7 +15,7 @@
 
 <div class="modal fade" id="editApplicationModal-@Model.Id" tabindex="-1"
      aria-labelledby="editApplicationModalLabel-@Model.Id" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content hf-modal">
 
             <form asp-page-handler="Update" method="post">
@@ -112,65 +112,66 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="editApp-followUpDate-@Model.Id" class="form-label">Follow-up
-                                        Date</label>
-                                        <input type="date" class="form-control" id="editApp-followUpDate-@Model.Id"
-                                               name="UpdateInput.FollowUpDate"
-                                               value="@(Model.FollowUpDate?.ToString("yyyy-MM-dd"))" />
-                                    </div>
+                                    <label for="editApp-followUpDate-@Model.Id" class="form-label">
+                                        Follow-up Date
+                                    </label>
+                                    <input type="date" class="form-control" id="editApp-followUpDate-@Model.Id"
+                                           name="UpdateInput.FollowUpDate"
+                                           value="@(Model.FollowUpDate?.ToString("yyyy-MM-dd"))" />
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="editApp-contact-@Model.Id" class="form-label">Contact</label>
-                                    <input type="text" class="form-control" id="editApp-contact-@Model.Id"
-                                           name="UpdateInput.Contact" value="@Model.Contact" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="editApp-notes-@Model.Id" class="form-label">Notes</label>
-                                    <textarea class="form-control" id="editApp-notes-@Model.Id" name="UpdateInput.Notes"
-                                              rows="3">@Model.Notes</textarea>
-                                </div>
-
-                                <hr class="border-secondary" />
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label text-secondary">Resume</label>
-                                        <input type="text" class="form-control" disabled
-                                               value="@(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" : Model.ResumePath)" />
-                                    </div>
-
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label text-secondary">Cover Letter</label>
-                                        <input type="text" class="form-control" disabled
-                                               value="@(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" : Model.CoverLetterPath)" />
-                                    </div>
-                                </div>
-
                             </div>
 
-                            <!-- Job description tab -->
-                            <div class="tab-pane fade" id="edit-jobdesc-pane-@Model.Id" role="tabpanel"
-                                 aria-labelledby="edit-jobdesc-tab-@Model.Id">
+                            <div class="mb-3">
+                                <label for="editApp-contact-@Model.Id" class="form-label">Contact</label>
+                                <input type="text" class="form-control" id="editApp-contact-@Model.Id"
+                                       name="UpdateInput.Contact" value="@Model.Contact" />
+                            </div>
 
-                                <div class="mb-3">
-                                    <label for="editApp-jobdesc-@Model.Id" class="form-label">Job Description</label>
-                                    <textarea class="form-control" id="editApp-jobdesc-@Model.Id"
-                                              name="UpdateInput.JobDescription" rows="14">@Model.JobDescription</textarea>
+                            <div class="mb-3">
+                                <label for="editApp-notes-@Model.Id" class="form-label">Notes</label>
+                                <textarea class="form-control" id="editApp-notes-@Model.Id" name="UpdateInput.Notes"
+                                          rows="3">@Model.Notes</textarea>
+                            </div>
+
+                            <hr class="border-secondary" />
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary">Resume</label>
+                                    <input type="text" class="form-control" disabled
+                                           value="@(string.IsNullOrWhiteSpace(Model.ResumePath) ? "Not generated yet" : Model.ResumePath)" />
                                 </div>
 
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary">Cover Letter</label>
+                                    <input type="text" class="form-control" disabled
+                                           value="@(string.IsNullOrWhiteSpace(Model.CoverLetterPath) ? "Not generated yet" : Model.CoverLetterPath)" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Job description tab -->
+                        <div class="tab-pane fade" id="edit-jobdesc-pane-@Model.Id" role="tabpanel"
+                             aria-labelledby="edit-jobdesc-tab-@Model.Id">
+
+                            <div class="mb-3">
+                                <label for="editApp-jobdesc-@Model.Id" class="form-label">Job Description</label>
+                                <textarea class="form-control" id="editApp-jobdesc-@Model.Id"
+                                          name="UpdateInput.JobDescription" rows="14">@Model.JobDescription</textarea>
                             </div>
 
                         </div>
 
                     </div>
+                </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-hf-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Save Changes</button>
+                </div>
+            </form>
+
         </div>
     </div>
+</div>
