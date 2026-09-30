@@ -12,11 +12,13 @@ public class IndexModel : PageModel
 {
     private readonly HackerFlowContext _context;
     private readonly IFileService _file;
+    private readonly IOpenFileService _openFile;
 
-    public IndexModel(HackerFlowContext context, IFileService file)
+    public IndexModel(HackerFlowContext context, IFileService file, IOpenFileService openFile)
     {
         _context = context;
         _file = file;
+        _openFile = openFile;
     }
 
     public List<JobApplication> Applications { get; private set; } = [];
@@ -133,5 +135,29 @@ public class IndexModel : PageModel
         await _context.SaveChangesAsync();
 
         return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostOpenResumeAsync(int id)
+    {
+        var application = await _context.Applications.FindAsync(id);
+        if (string.IsNullOrWhiteSpace(application?.ResumePath) || !System.IO.File.Exists(application.ResumePath))
+            return NotFound();
+
+        _openFile.OpenFile(application.ResumePath);
+
+        // stays on the current page
+        return new NoContentResult(); 
+    }
+
+    public async Task<IActionResult> OnPostOpenCoverLetterAsync(int id)
+    {
+        var application = await _context.Applications.FindAsync(id);
+        if (string.IsNullOrWhiteSpace(application?.ResumePath) || !System.IO.File.Exists(application.ResumePath))
+            return NotFound();
+
+        _openFile.OpenFile(application.ResumePath);
+
+        // stays on the current page
+        return new NoContentResult(); 
     }
 }

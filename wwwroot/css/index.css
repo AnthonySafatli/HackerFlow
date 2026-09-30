@@ -15,3 +15,17 @@
 .empty-state {
   color: var(--hf-text);
 }
+
+/* Overlap Issues */
+
+.hf-detail-row,
+.hf-detail-value {
+  min-width: 0;
+}
+
+.hf-file-link {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: start;
+}

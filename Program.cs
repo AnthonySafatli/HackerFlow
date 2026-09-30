@@ -12,6 +12,7 @@ builder.Services.AddDbContext<HackerFlowContext>(options =>
 
 builder.Services.AddScoped<IAppSettingsService, AppSettingsService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IOpenFileService, OpenFileService>();
 
 var app = builder.Build();
 

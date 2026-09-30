@@ -14,12 +14,14 @@ public class IndexModel : PageModel
     private readonly HackerFlowContext _context;
     private readonly IAppSettingsService _settings;
     private readonly IFileService _file;
+    private readonly IOpenFileService _openFile;
 
-    public IndexModel(HackerFlowContext context, IAppSettingsService settings, IFileService file)
+    public IndexModel(HackerFlowContext context, IAppSettingsService settings, IFileService file, IOpenFileService openFile)
     {
         _context = context;
         _settings = settings;
         _file = file;
+        _openFile = openFile;
     }
 
     public string CoverLetterFolder { get; set; } = "";
@@ -174,12 +176,8 @@ public class IndexModel : PageModel
         if (coverLetter == null || !System.IO.File.Exists(coverLetter.FilePath))
             return NotFound();
 
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = coverLetter.FilePath,
-            UseShellExecute = true
-        });
-
+        _openFile.OpenFile(coverLetter.FilePath);
+        
         // stays on the current page
         return new NoContentResult(); 
     }

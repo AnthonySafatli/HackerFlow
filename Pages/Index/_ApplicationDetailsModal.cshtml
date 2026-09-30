@@ -126,123 +126,150 @@
                                     <hr class="border-secondary" />
 
                                     <div class="row">
-                                        <div class="col-md-6 hf-detail-row">
+                                        <div class="col-12 col-md-6 hf-detail-row">
                                             <div class="hf-detail-label">Resume</div>
                                             <div class="hf-detail-value">
-                                                @(string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath) ? "Not generated yet" :
-                                            Model.JobApplicaiton.ResumePath)</div>
-                                            </div>
-
-                                            <div class="col-md-6 hf-detail-row">
-                                                <div class="hf-detail-label">Cover Letter</div>
-                                                <div class="hf-detail-value">
-                                                    @(string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath) ? "Not generated yet" :
-                                            Model.JobApplicaiton.CoverLetterPath)</div>
-                                                </div>
+                                                @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath))
+                                                {
+                                                    <span>Not generated yet</span>
+                                                }
+                                                else
+                                                {
+                                                    <form method="post" asp-page-handler="OpenResume"
+                                                          asp-route-id="@Model.JobApplicaiton.Id" class="d-block">
+                                                        <button type="submit" class="btn btn-link p-0 text-start hf-file-link"
+                                                                title="@Model.JobApplicaiton.ResumePath">
+                                                            @System.IO.Path.GetFileName(Model.JobApplicaiton.ResumePath)
+                                                        </button>
+                                                    </form>
+                                                }
                                             </div>
                                         </div>
 
-                                        <!-- Job description tab -->
-                                        <div class="tab-pane fade" id="details-jobdesc-pane-@Model.JobApplicaiton.Id"
-                                             role="tabpanel" aria-labelledby="details-jobdesc-tab-@Model.JobApplicaiton.Id">
-
-                                            @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.JobDescription))
-                                            {
-                                                <p class="text-secondary mb-0">No job description saved for this application.</p>
-                                            }
-                                            else
-                                            {
-                                                <p class="hf-detail-value hf-jobdescription">@Model.JobApplicaiton.JobDescription</p>
-                                            }
-
+                                        <div class="col-12 col-md-6 hf-detail-row">
+                                            <div class="hf-detail-label">Cover Letter</div>
+                                            <div class="hf-detail-value">
+                                                @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath))
+                                                {
+                                                    <span>Not generated yet</span>
+                                                }
+                                                else
+                                                {
+                                                    <form method="post" asp-page-handler="OpenCoverLetter"
+                                                          asp-route-id="@Model.JobApplicaiton.Id" class="d-block">
+                                                        <button type="submit" class="btn btn-link p-0 text-start hf-file-link"
+                                                                title="@Model.JobApplicaiton.CoverLetterPath">
+                                                            @System.IO.Path.GetFileName(Model.JobApplicaiton.CoverLetterPath)
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Action sidebar -->
-                                <div class="hf-modal-actions">
-                                    <div class="hf-modal-actions-label">Actions</div>
+                                <!-- Job description tab -->
+                                <div class="tab-pane fade" id="details-jobdesc-pane-@Model.JobApplicaiton.Id"
+                                     role="tabpanel" aria-labelledby="details-jobdesc-tab-@Model.JobApplicaiton.Id">
 
-                                    <partial name="_ActionDropdown" model="@(new ActionDropdownVM
-                                             {
-                                                 CssClass = "btn-hf-primary",
-                                                 Label = " Generate Resume",
-                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-resume",
-                                                 Items = Model.ResumeGroups,
-                                                 Handler = "resumeGenerated"
-                                             })" />
+                                    @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.JobDescription))
+                                    {
+                                        <p class="text-secondary mb-0">No job description saved for this application.</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="hf-detail-value hf-jobdescription">@Model.JobApplicaiton.JobDescription</p>
+                                    }
 
-                                    <partial name="_ActionDropdown" model="@(new ActionDropdownVM
-                                             {
-                                                 CssClass = "btn-hf-primary",
-                                                 Label = " Generate Cover Letter",
-                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-cover-letter",
-                                                 Items = Model.CoverLetterGroups,
-                                                 Handler = "coverLetterGenerated"
-                                             })" />
-
-                                    <br />
-
-                                    <partial name="_ActionButton" model="@(new ActionButtonVM
-                                             {
-                                                 CssClass = "btn-outline-secondary",
-                                                 Label = " Copy Prompt",
-                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-prompt",
-                                                 Handler = "copyPrompt"
-                                             })" />
-
-                                    <form asp-page-handler="ContinuePipeline" method="post">
-                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
-                                        <button type="submit" class="btn btn-outline-secondary w-100"
-                                                disabled="@((int)Model.JobApplicaiton.Status >= 5)">
-                                            @if ((int)Model.JobApplicaiton.Status >= 5)
-                                            {
-                                                @("Continue Pipeline")
-                                            }
-                                            else
-                                            {
-                                                @("Mark as " + (Model.JobApplicaiton.Status + 1).ToString())
-                                            }
-                                        </button>
-                                    </form>
-
-                                    <partial name="_ActionButton" model="@(new ActionButtonVM
-                                             {
-                                                 CssClass = "btn-outline-secondary",
-                                                 Label = " Create Application Package",
-                                                 Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-application-package"
-                                             })" />
-
-                                    <br />
-
-                                    <form asp-page-handler="Archive" method="post">
-                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
-                                        <button type="submit" class="btn btn-outline-danger w-100">
-                                            Archive Application
-                                        </button>
-                                    </form>
-
-                                    <form asp-page-handler="Delete" method="post">
-                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
-                                        <button type="submit" class="btn btn-danger w-100">
-                                            Delete Application
-                                        </button>
-                                    </form>
                                 </div>
-
                             </div>
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
-                                    data-bs-target="#editApplicationModal-@Model.JobApplicaiton.Id">
-                                Edit
-                            </button>
+                        <!-- Action sidebar -->
+                        <div class="hf-modal-actions">
+                            <div class="hf-modal-actions-label">Actions</div>
+
+                            <partial name="_ActionDropdown" model="@(new ActionDropdownVM
+                                     {
+                                         CssClass = "btn-hf-primary",
+                                         Label = " Generate Resume",
+                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-resume",
+                                         Items = Model.ResumeGroups,
+                                         Handler = "resumeGenerated"
+                                     })" />
+
+                            <partial name="_ActionDropdown" model="@(new ActionDropdownVM
+                                     {
+                                         CssClass = "btn-hf-primary",
+                                         Label = " Generate Cover Letter",
+                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-cover-letter",
+                                         Items = Model.CoverLetterGroups,
+                                         Handler = "coverLetterGenerated"
+                                     })" />
+
+                            <br />
+
+                            <partial name="_ActionButton" model="@(new ActionButtonVM
+                                     {
+                                         CssClass = "btn-outline-secondary",
+                                         Label = " Copy Prompt",
+                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-prompt",
+                                         Handler = "copyPrompt"
+                                     })" />
+
+                            <form asp-page-handler="ContinuePipeline" method="post">
+                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                <button type="submit" class="btn btn-outline-secondary w-100"
+                                        disabled="@((int)Model.JobApplicaiton.Status >= 5)">
+                                    @if ((int)Model.JobApplicaiton.Status >= 5)
+                                    {
+                                        @("Continue Pipeline")
+                                    }
+                                    else
+                                    {
+                                        @("Mark as " + (Model.JobApplicaiton.Status + 1).ToString())
+                                    }
+                                </button>
+                            </form>
+
+                            <partial name="_ActionButton" model="@(new ActionButtonVM
+                                     {
+                                         CssClass = "btn-outline-secondary",
+                                         Label = " Create Application Package",
+                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-application-package",
+                                         Disabled = string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath) && string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath)
+                                     })" />
+
+                            <br />
+
+                            <form asp-page-handler="Archive" method="post">
+                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    Archive Application
+                                </button>
+                            </form>
+
+                            <form asp-page-handler="Delete" method="post">
+                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                <button type="submit" class="btn btn-danger w-100">
+                                    Delete Application
+                                </button>
+                            </form>
                         </div>
+
                     </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                            data-bs-target="#editApplicationModal-@Model.JobApplicaiton.Id">
+                        Edit
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
