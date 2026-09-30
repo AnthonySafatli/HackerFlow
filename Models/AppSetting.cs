@@ -4,6 +4,8 @@ public class AppSetting
 {
     public const string ResumeFolder = "ResumePath";
     public const string GerenatedResumeFolder = "GeneratedResumePath";
+    public const string CoverLetterFolder = "CoverLetterPath";
+    public const string GerenatedCoverLetterFolder = "GeneratedCoverLetterPath";
 
     public int Id { get; set; }
 
@@ -13,9 +15,6 @@ public class AppSetting
 }
 
 /*
-Current Settings
-
-- Resume Save Path: The path where resumes will be saved. Default is "~/Document/Resumes/Generated".
-- Cover Letter Save Path: The path where cover letters will be saved. Default is "~/Document/CoverLetters/Generated".
+Needed Settings
 - Prompt: The prompt used for generating for AI generated cover letter
 */

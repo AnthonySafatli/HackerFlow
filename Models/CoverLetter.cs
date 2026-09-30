@@ -1,6 +1,6 @@
 namespace HackerFlow.Models;
 
-public class Resume : BaseFile
+public class CoverLetter : BaseFile
 {
     
 }

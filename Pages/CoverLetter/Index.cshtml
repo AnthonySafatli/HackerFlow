@@ -1,0 +1,138 @@
+@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Cover Letter";
+}
+
+<div>
+    <!-- Page header -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Cover Letter Manager</h1>
+            <p class="text-secondary mb-0">Store all versions of your cover letter.</p>
+        </div>
+
+        <button type="button" id="newCoverLetterButton" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
+                data-bs-target="#newCoverLetterModal">
+            New Cover Letter <span class="ms-1">+</span>
+        </button>
+    </div>
+
+    <div>
+        <form method="post" asp-page-handler="CoverLetterFolder" class="mb-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="CoverLetterFolder" class="col-form-label">Cover Letter Folder</label>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <img src="~/lib/bootstrap-icons/folder2.svg" alt="Folder" class="icon-white">
+                        </span>
+                        <input id="coverLetterFolder" name="ValueInput.Value" value="@Model.CoverLetterFolder"
+                               class="form-control" placeholder="~/CoverLetters" />
+                        <button type="submit" class="btn btn-hf-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form method="post" asp-page-handler="GeneratedFolder" class="mb-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="generatedFolder" class="col-form-label">Generated Cover Letter Folder</label>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <img src="~/lib/bootstrap-icons/folder-plus.svg" alt="Folder plus" class="icon-white">
+                        </span>
+                        <input id="generatedFolder" name="ValueInput.Value" value="@Model.GeneratedCoverLetterFolder"
+                               class="form-control" placeholder="~/CoverLetters/Generated" />
+                        <button type="submit" class="btn btn-hf-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cover letter groups -->
+    @if (!Model.CoverLetterGroups.Any())
+    {
+        <div class="card hf-card">
+            <div class="card-body text-center text-secondary py-4">No cover letters yet.</div>
+        </div>
+    }
+
+    @{
+        var i = 0;
+    }
+    @foreach (var group in Model.CoverLetterGroups)
+    {
+        var collapseId = $"coverLetterGroup-{i++}";
+        var latest = group.First();
+
+        <div class="card hf-card mb-3">
+            <button class="btn text-start d-flex justify-content-between align-items-center p-3" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="true" aria-controls="@collapseId">
+                <span class="fw-semibold">@group.Key</span>
+                <span class="small text-secondary">
+                    @group.Count() @(group.Count() == 1 ? "version" : "versions")
+                    · latest v@latest.Version, @latest.CreatedAt.ToString("MMM d, yyyy")
+                </span>
+            </button>
+
+            <div id="@collapseId" class="collapse show">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Version</th>
+                                <th scope="col">Path</th>
+                                <th scope="col">Date Created</th>
+                                <th scope="col">Notes</th>
+                                <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var coverLetter in group)
+                            {
+                                <tr>
+                                    <td><span class="fw-medium">v@coverLetter.Version</span></td>
+                                    <td>
+                                        <form method="post" asp-page-handler="Open" asp-route-id="@coverLetter.Id"
+                                              class="d-inline">
+                                            <button type="submit"
+                                                    class="btn btn-link p-0 small text-secondary text-decoration-none text-start"
+                                                    title="Open in default app">
+                                                @coverLetter.FilePath
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td><span class="text-secondary">@coverLetter.CreatedAt.ToString("MMM d, yyyy")</span></td>
+                                    <td><span class="text-secondary">@coverLetter.Notes</span></td>
+                                    <td class="text-end">
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@coverLetter.Id"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Delete @coverLetter.Name v@coverLetter.Version?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Modals {
+    <partial name="_NewCoverLetterModal" model="Model.CoverLetters.Select(r => r.Name).Distinct(StringComparer.OrdinalIgnoreCase)" />
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+}
