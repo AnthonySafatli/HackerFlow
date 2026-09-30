@@ -23,12 +23,16 @@ public class ApplicationsController : ControllerBase
         _file = file;
     }
 
+    // TODO: Look into moving these into the pages file
     [Route("{id}/generate-resume")]
     public async Task<IActionResult> GenerateResume(int id, string group)
     {
         var application = await _context.Applications.FindAsync(id);
         if (application == null)
             return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(application.ResumePath))
+            return BadRequest();
 
         var resume = await _context.Resumes
             .Where(x => x.Name == group)
@@ -60,6 +64,9 @@ public class ApplicationsController : ControllerBase
         var application = await _context.Applications.FindAsync(id);
         if (application == null)
             return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(application.CoverLetterPath))
+            return BadRequest();
 
         var coverLetter = await _context.CoverLetters
             .Where(x => x.Name == group)

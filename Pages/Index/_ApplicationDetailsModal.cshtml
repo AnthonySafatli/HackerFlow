@@ -131,7 +131,7 @@
                                             <div class="hf-detail-value">
                                                 @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath))
                                                 {
-                                                    <span>Not generated yet</span>
+                                                    <span id="resume-message">Not generated yet</span>
                                                 }
                                                 else
                                                 {
@@ -151,7 +151,7 @@
                                             <div class="hf-detail-value">
                                                 @if (string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath))
                                                 {
-                                                    <span>Not generated yet</span>
+                                                    <span id="cover-letter-message">Not generated yet</span>
                                                 }
                                                 else
                                                 {
@@ -195,7 +195,8 @@
                                          Label = " Generate Resume",
                                          Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-resume",
                                          Items = Model.ResumeGroups,
-                                         Handler = "resumeGenerated"
+                                         Handler = "resumeGenerated",
+                                         Disabled = !string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath)
                                      })" />
 
                             <partial name="_ActionDropdown" model="@(new ActionDropdownVM
@@ -204,7 +205,8 @@
                                          Label = " Generate Cover Letter",
                                          Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-cover-letter",
                                          Items = Model.CoverLetterGroups,
-                                         Handler = "coverLetterGenerated"
+                                         Handler = "coverLetterGenerated",
+                                         Disabled = !string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath)
                                      })" />
 
                             <br />
@@ -217,20 +219,16 @@
                                          Handler = "copyPrompt"
                                      })" />
 
-                            <form asp-page-handler="ContinuePipeline" method="post">
-                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
-                                <button type="submit" class="btn btn-outline-secondary w-100"
-                                        disabled="@((int)Model.JobApplicaiton.Status >= 5)">
-                                    @if ((int)Model.JobApplicaiton.Status >= 5)
-                                    {
-                                        @("Continue Pipeline")
-                                    }
-                                    else
-                                    {
+                            @if ((int)Model.JobApplicaiton.Status < 5)
+                            {
+                            
+                                <form asp-page-handler="ContinuePipeline" method="post">
+                                    <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                    <button type="submit" class="btn btn-outline-secondary w-100">
                                         @("Mark as " + (Model.JobApplicaiton.Status + 1).ToString())
-                                    }
-                                </button>
-                            </form>
+                                    </button>
+                                </form>
+                            }
 
                             <partial name="_ActionButton" model="@(new ActionButtonVM
                                      {

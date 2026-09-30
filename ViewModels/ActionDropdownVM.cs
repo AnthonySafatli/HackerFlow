@@ -9,4 +9,5 @@ public class ActionDropdownVM
     public string ParamName { get; set; } = "group";  
     public IEnumerable<string> Items { get; set; } = [];
     public string CssClass { get; set; } = "btn-hf-primary";
+    public bool Disabled { get; set;}
 }
