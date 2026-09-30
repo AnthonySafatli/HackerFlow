@@ -1,0 +1,44 @@
+@model HackerFlow.Models.Prompt
+
+<div class="modal fade" id="editPromptModal-@Model.Id" tabindex="-1" aria-labelledby="editPromptModalLabel-@Model.Id"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content hf-modal">
+            <form asp-page-handler="Update" method="post">
+                <input type="hidden" name="UpdateInput.Id" value="@Model.Id" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPromptModalLabel-@Model.Id">
+                        Edit Prompt — @Model.Name
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editPrompt-name-@Model.Id" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editPrompt-name-@Model.Id" name="UpdateInput.Name"
+                               value="@Model.Name" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editPrompt-description-@Model.Id" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="editPrompt-description-@Model.Id"
+                               name="UpdateInput.Description" value="@Model.Description" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editPrompt-text-@Model.Id" class="form-label">Prompt</label>
+                        <textarea class="form-control" id="editPrompt-text-@Model.Id" name="UpdateInput.PromptString"
+                                  rows="8" required>@Model.PromptString</textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

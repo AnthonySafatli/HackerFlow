@@ -1,0 +1,43 @@
+@model HackerFlow.Models.Prompt
+
+<div class="modal fade" id="detailsPromptModal-@Model.Id" tabindex="-1"
+     aria-labelledby="detailsPromptModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content hf-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsPromptModalLabel-@Model.Id">@Model.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Description</div>
+                    <div class="hf-detail-value">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)
+                    </div>
+                </div>
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Date Created</div>
+                    <div class="hf-detail-value">@Model.CreatedAt.ToString("MMM d, yyyy")</div>
+                </div>
+
+                <hr class="border-secondary" />
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Prompt</div>
+                    <p class="hf-detail-value hf-jobdescription mb-0">@Model.PromptString</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#editPromptModal-@Model.Id">
+                    Edit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,7 @@
 using HackerFlow.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace HackerFlow.Pages.Prompt;
 
@@ -13,8 +14,15 @@ public class IndexModel : PageModel
         _context = context;
     }
 
-    public IActionResult OnGet()
+    public List<Models.Prompt> Prompts { get; private set; } = [];
+
+    private async Task LoadProperties()
     {
-        return Page();
+        Prompts = await _context.Prompts.ToListAsync();
+    }
+
+    public async Task OnGet()
+    {
+        await LoadProperties();
     }
 }
