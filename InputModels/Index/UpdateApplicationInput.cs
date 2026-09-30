@@ -27,9 +27,9 @@ public class UpdateApplicationInput
 
     public DateTime? FollowUpDate { get; set; }
 
-    public string Contact { get; set; } = "";
+    public string? Contact { get; set; } = "";
 
-    public string Notes { get; set; } = "";
+    public string? Notes { get; set; } = "";
 
-    public string JobDescription { get; set; } = "";
+    public string? JobDescription { get; set; } = "";
 }

@@ -142,7 +142,7 @@ public class IndexModel : PageModel
             Name = input.Name,
             Version = versionCount + 1,
             FilePath = path,
-            Notes = input.Notes,
+            Notes = input.Notes ?? "",
             CreatedAt = DateTime.UtcNow
         };
 

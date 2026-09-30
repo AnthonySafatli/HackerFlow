@@ -20,7 +20,7 @@ public class CreateApplicationInput
     [Required]
     public string Method { get; set; } = "";
     
-    public string Contact { get; set; } = "";
+    public string? Contact { get; set; } = "";
     
-    public string Notes { get; set; } = "";
+    public string? Notes { get; set; } = "";
 }

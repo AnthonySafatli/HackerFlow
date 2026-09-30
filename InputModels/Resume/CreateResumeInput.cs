@@ -10,5 +10,5 @@ public class CreateResumeInput
     [Required]
     public IFormFile File { get; set; } = null!;
 
-    public string Notes { get; set; } = "";
+    public string? Notes { get; set; } = "";
 }

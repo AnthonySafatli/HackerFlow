@@ -41,8 +41,8 @@ public class IndexModel : PageModel
             Url = input.Url,
             Status = input.Status,
             Method = input.Method,
-            Contact = input.Contact,
-            Notes = input.Notes
+            Contact = input.Contact ?? "",
+            Notes = input.Notes ?? ""
         };
 
         _context.Applications.Add(application);
@@ -72,9 +72,9 @@ public class IndexModel : PageModel
         application.Method = input.Method;
         application.DateApplied = input.DateApplied;
         application.FollowUpDate = input.FollowUpDate;
-        application.Contact = input.Contact;
-        application.Notes = input.Notes;
-        application.JobDescription = input.JobDescription;
+        application.Contact = input.Contact ?? "";
+        application.Notes = input.Notes ?? "";
+        application.JobDescription = input.JobDescription ?? "";
 
         _context.SaveChanges();
 
