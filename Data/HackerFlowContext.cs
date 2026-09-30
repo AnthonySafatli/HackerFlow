@@ -12,4 +12,5 @@ public class HackerFlowContext : DbContext
     public DbSet<AppSetting> AppSettings => Set<AppSetting>();
     public DbSet<Resume> Resumes => Set<Resume>();
     public DbSet<CoverLetter> CoverLetters => Set<CoverLetter>();
+    public DbSet<Prompt> Prompts => Set<Prompt>();
 }
