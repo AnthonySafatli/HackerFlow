@@ -4,16 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using HackerFlow.Data;
 using Microsoft.EntityFrameworkCore;
 using HackerFlow.InputModels.Index;
+using HackerFlow.Services;
 
 namespace HackerFlow.Pages.Index;
 
 public class IndexModel : PageModel
 {
     private readonly HackerFlowContext _context;
+    private readonly IFileService _file;
 
-    public IndexModel(HackerFlowContext context)
+    public IndexModel(HackerFlowContext context, IFileService file)
     {
         _context = context;
+        _file = file;
     }
 
     public List<JobApplication> Applications { get; private set; } = [];
@@ -87,5 +90,48 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    
+    public async Task<IActionResult> OnPostContinuePipelineAsync(int id)
+    {
+        var application  = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        if ((int)application.Status >= 5)
+            return RedirectToPage();
+
+        application.Status += 1;
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostArchiveAsync(int id)
+    {
+        var application  = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        application.Status = ApplicationStatus.Archived;
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        var application = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        _context.Applications.Remove(application);
+
+        if (!string.IsNullOrWhiteSpace(application.CoverLetterPath))
+            _file.Delete(application.CoverLetterPath);
+        if (!string.IsNullOrWhiteSpace(application.ResumePath))
+            _file.Delete(application.ResumePath);
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
 }

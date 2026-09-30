@@ -158,9 +158,7 @@ public class IndexModel : PageModel
     {
         var coverLetter = await _context.CoverLetters.FindAsync(id);
         if (coverLetter == null)
-        {
             return NotFound();
-        }
 
         _context.CoverLetters.Remove(coverLetter);
         _file.Delete(coverLetter.FilePath);
@@ -174,9 +172,7 @@ public class IndexModel : PageModel
     {
         var coverLetter = await _context.CoverLetters.FindAsync(id);
         if (coverLetter == null || !System.IO.File.Exists(coverLetter.FilePath))
-        {
             return NotFound();
-        }
 
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {

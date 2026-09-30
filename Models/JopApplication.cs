@@ -36,7 +36,7 @@ public enum ApplicationStatus
     Applied = 2,
     Interviewing = 3,
     Offered = 4,
-    Rejected = 5,
-    Accepted = 6,
+    Accepted = 5,
+    Rejected = 6,
     Archived = 7
 }

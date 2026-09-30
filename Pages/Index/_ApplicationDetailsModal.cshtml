@@ -193,10 +193,14 @@
                                         Copy Prompt
                                     </button>
 
-                                    <button type="button" class="btn btn-outline-secondary w-100">
-                                        @* TODO: Make this text dynamic so it says what the action is *@
-                                        Continue Pipeline
-                                    </button>
+                                    <form asp-page-handler="ContinuePipeline" method="post">
+                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                        <button type="submit" class="btn btn-outline-secondary w-100"
+                                                disabled="@((int)Model.JobApplicaiton.Status >= 5)">
+                                            @* TODO: Make this text dynamic so it says what the action is *@
+                                            Continue Pipeline
+                                        </button>
+                                    </form>
 
                                     <button type="button" class="btn btn-outline-secondary w-100">
                                         Create Application Package
@@ -204,13 +208,19 @@
 
                                     <br />
 
-                                    <button type="button" class="btn btn-outline-danger w-100">
-                                        Archive Application
-                                    </button>
+                                    <form asp-page-handler="Archive" method="post">
+                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                        <button type="submit" class="btn btn-outline-danger w-100">
+                                            Archive Application
+                                        </button>
+                                    </form>
 
-                                    <button type="button" class="btn btn-danger w-100">
-                                        Delete Application
-                                    </button>
+                                    <form asp-page-handler="Delete" method="post">
+                                        <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                        <button type="submit" class="btn btn-danger w-100">
+                                            Delete Application
+                                        </button>
+                                    </form>
                                 </div>
 
                             </div>
