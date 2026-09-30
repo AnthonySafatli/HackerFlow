@@ -130,17 +130,19 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var versionCount = await _context.Resumes.CountAsync(r => r.Name == input.Name);
+        var version = (await _context.Resumes
+            .Where(r => r.Name == input.Name)
+            .MaxAsync(r => (int?)r.Version) ?? 0) + 1;
         
         var resumeFolder = await _settings.GetSetting(AppSetting.ResumeFolder);
-        var fileName = $"{input.Name}_{versionCount}_{Guid.NewGuid()}.pdf";
+        var fileName = $"{input.Name}_{version}_{Guid.NewGuid()}.pdf";
 
         string path = await _file.SaveAsync(resumeFolder, fileName, input.File.OpenReadStream());
 
         var resume = new Models.Resume
         {
             Name = input.Name,
-            Version = versionCount + 1,
+            Version = version,
             FilePath = path,
             Notes = input.Notes ?? "",
             CreatedAt = DateTime.UtcNow
