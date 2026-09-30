@@ -4,6 +4,7 @@ using HackerFlow.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using HackerFlow.InputModels.Resume;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HackerFlow.Pages.Resume;
 
@@ -16,6 +17,13 @@ public class IndexModel : PageModel
         _context = context;
     }
 
+
+    [BindProperty]
+    public string ResumeFolder { get; set; } = "";
+
+    [BindProperty]
+    public string GeneratedResumeFolder { get; set; } = "";
+
     public List<Models.Resume> Resumes { get; private set; } = [];
 
     private async Task LoadResumesAsync() => 
@@ -24,6 +32,16 @@ public class IndexModel : PageModel
     public async Task OnGetAsync()
     {
         await LoadResumesAsync();
+    }
+
+    public async Task<IActionResult> OnPostResumeFolderAsync()
+    {
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostGeneratedFolderAsync()
+    {
+        return Page();
     }
 
     public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreateResumeInput input)

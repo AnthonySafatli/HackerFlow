@@ -23,6 +23,42 @@
         </button>
     </div>
 
+    <div>
+        <form method="post" asp-page-handler="ResumeFolder" class="mb-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="resumeFolder" class="col-form-label">Resume Folder</label>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <img src="~/lib/bootstrap-icons/folder2.svg" alt="Folder2">
+                        </span>
+                        <input asp-for="ResumeFolder" id="resumeFolder" class="form-control" placeholder="~/Resumes" />
+                        <button type="submit" class="btn btn-hf-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form method="post" asp-page-handler="GeneratedFolder" class="mb-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="generatedFolder" class="col-form-label">Generated Resume Folder</label>
+                </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <img src="~/lib/bootstrap-icons/folder-plus.svg" alt="FolderPlus">
+                        </span>
+                        <input asp-for="GeneratedResumeFolder" id="generatedFolder" class="form-control"
+                               placeholder="~/Resumes/Generated" />
+                        <button type="submit" class="btn btn-hf-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Applications table -->
     <div class="card hf-card">
