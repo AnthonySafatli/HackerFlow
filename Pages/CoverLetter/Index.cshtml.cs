@@ -95,7 +95,7 @@ public class IndexModel : PageModel
 
         Directory.CreateDirectory(newFolder);
 
-        var applications = await _context.Applications.Where(x => x.CoverLetterPath != null).ToListAsync();
+        var applications = await _context.Applications.Where(x => !string.IsNullOrWhiteSpace(x.CoverLetterPath)).ToListAsync();
 
         foreach (var coverLetter in applications)
         {
