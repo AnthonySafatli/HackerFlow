@@ -11,6 +11,7 @@ builder.Services.AddDbContext<HackerFlowContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAppSettingsService, AppSettingsService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 var app = builder.Build();
 
