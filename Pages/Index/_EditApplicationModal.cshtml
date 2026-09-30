@@ -1,5 +1,18 @@
 @model HackerFlow.Models.JobApplication
 
+@{
+    var statusOptions = new string[] {
+        "Bookmarked",
+        "Applying",
+        "Applied",
+        "Interviewing",
+        "Offered",
+        "Accepted",
+        "Rejected",
+        "Archived"
+    };
+}
+
 <div class="modal fade" id="editApplicationModal-@Model.Id" tabindex="-1"
      aria-labelledby="editApplicationModalLabel-@Model.Id" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -66,14 +79,12 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="editApp-status-@Model.Id" class="form-label">Status</label>
                                     <select class="form-select" id="editApp-status-@Model.Id" name="UpdateInput.Status">
-                                        <option value="Bookmarked" selected>Bookmarked</option>
-                                        <option value="Applying">Applying</option>
-                                        <option value="Applied">Applied</option>
-                                        <option value="Interviewing">Interviewing</option>
-                                        <option value="Negotiating">Offered</option>
-                                        <option value="Accepted">Accepted</option>
-                                        <option value="Rejected">Rejected</option>
-                                        <option value="Archived">Archived</option>
+                                        @for (int i = 0; i < statusOptions.Length; i++)
+                                        {
+                                            <option value="@(i)" selected="@((int)Model.Status == i)">
+                                                @statusOptions[i]
+                                            </option>
+                                        }
                                     </select>
                                 </div>
 
