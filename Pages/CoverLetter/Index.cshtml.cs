@@ -136,8 +136,9 @@ public class IndexModel : PageModel
             .Where(r => r.Name == input.Name)
             .MaxAsync(r => (int?)r.Version) ?? 0) + 1;
         
+        var ext = Path.GetExtension(input.File.FileName).ToLowerInvariant();
         var coverLetterFolder = await _settings.GetSetting(AppSetting.CoverLetterFolder);
-        var fileName = $"{input.Name}_{version}_{Guid.NewGuid()}.pdf";
+        var fileName = $"{input.Name}_{version}_{Guid.NewGuid()}{ext}";
 
         string path = await _file.SaveAsync(coverLetterFolder, fileName, input.File.OpenReadStream());
 

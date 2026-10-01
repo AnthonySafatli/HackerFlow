@@ -15,12 +15,14 @@ public class ApplicationsController : ControllerBase
     private readonly HackerFlowContext _context;
     private readonly IAppSettingsService _settings;
     private readonly IFileService _file;
+    private readonly IDocumentTextExtractor _extractor;
 
-    public ApplicationsController(HackerFlowContext context, IAppSettingsService settings, IFileService file)
+    public ApplicationsController(HackerFlowContext context, IAppSettingsService settings, IFileService file, IDocumentTextExtractor extractor)
     {
         _context = context;
         _settings = settings;
         _file = file;
+        _extractor = extractor;
     }
 
     // TODO: Look into moving these into the pages file
@@ -45,8 +47,9 @@ public class ApplicationsController : ControllerBase
         if (resumeData == null)
             return BadRequest();
 
+        var ext = Path.GetExtension(resume.FilePath).ToLowerInvariant();
         var resumeFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
-        var resumeName = $"{application.Company}_{application.Role}_Resume_{Guid.NewGuid()}.pdf";
+        var resumeName = $"{application.Company}_{application.Role}_Resume_{Guid.NewGuid()}{ext}";
 
         var resumePath = await _file.SaveAsync(resumeFolder, resumeName, resumeData);
         if (resumePath == null) 
@@ -79,8 +82,9 @@ public class ApplicationsController : ControllerBase
         if (coverLetterData == null)
             return BadRequest();
 
+        var ext = Path.GetExtension(coverLetter.FilePath).ToLowerInvariant();
         var coverLetterFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
-        var coverLetterName = $"{application.Company}_{application.Role}_CoverLetter_{Guid.NewGuid()}.pdf";
+        var coverLetterName = $"{application.Company}_{application.Role}_CoverLetter_{Guid.NewGuid()}{ext}";
 
         var coverLetterPath = await _file.SaveAsync(coverLetterFolder, coverLetterName, coverLetterData);
         if (coverLetterPath == null) 
@@ -92,10 +96,33 @@ public class ApplicationsController : ControllerBase
         return Ok();
     }
     
+
     [HttpPost("{id}/create-prompt")]
-    public async Task<IActionResult> CreatePrompt(int id)
+    public async Task<IActionResult> CreatePrompt(int id, string name, CancellationToken ct)
     {
-        return Ok(new { prompt = "Test" });
+        var application = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        var prompt = await _context.Prompts.FirstOrDefaultAsync(x => x.Name == name, ct);
+        if (prompt == null)
+            return NotFound();
+
+        var resumeText = await ReadDocumentAsync(application.ResumePath, ct);
+        var coverLetterText = await ReadDocumentAsync(application.CoverLetterPath, ct);
+
+        var result = prompt.PromptString;
+
+        if (resumeText != null)
+            result = result.Replace("{{resume}}", resumeText);
+
+        if (coverLetterText != null)
+            result = result.Replace("{{coverLetter}}", coverLetterText);
+
+        if (!string.IsNullOrWhiteSpace(application.JobDescription))
+            result.Replace("{{jobDescription}}", application.JobDescription);
+        
+        return Ok(new { prompt = result });
     }
 
     [Route("{id}/create-application-package")]
@@ -137,5 +164,14 @@ public class ApplicationsController : ControllerBase
         await Task.WhenAll(saveTasks);
 
         return Ok();
+    }
+
+    private async Task<string> ReadDocumentAsync(string? path, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !System.IO.File.Exists(path))
+            return string.Empty;
+
+        await using var stream = System.IO.File.OpenRead(path);
+        return await _extractor.ExtractTextAsync(stream, path, ct);
     }
 }
