@@ -1,4 +1,6 @@
-﻿@{
+﻿@inject IConfiguration Config
+
+@{
     var title = ViewData["Title"] ?? "HackerFlow";
 }
 
@@ -85,17 +87,17 @@
             <div class="d-flex justify-content-center align-items-center small text-secondary gap-2">
                 <span><strong>HackerFlow</strong></span> <strong>|</strong>
                 <span>An Application by <strong>Anthony Safatli</strong></span> <strong>|</strong>
-                <span>v0.1.0/span> <strong>|</strong>
-                    <span>&copy; @DateTime.Now.Year</span>
-                </div>
+                <span>@("v" + Config["AppVersion"])</span> <strong>|</strong>
+                <span>&copy; @DateTime.Now.Year</span>
             </div>
-        </footer>
+        </div>
+    </footer>
 
-        @await RenderSectionAsync("Modals", required: false)
+    @await RenderSectionAsync("Modals", required: false)
 
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 
 </html>
