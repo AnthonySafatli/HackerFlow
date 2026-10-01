@@ -24,12 +24,14 @@ public class IndexModel : PageModel
     public List<JobApplication> Applications { get; private set; } = [];
     public List<string> ResumeGroups { get; private set; } = [];
     public List<string> CoverLetterGroups { get; private set; } = [];
+    public List<string> Prompts { get; private set; } = [];
 
     private async Task LoadProperties()
     {
         Applications = await _context.Applications.ToListAsync();
         ResumeGroups = await _context.Resumes.GroupBy(x => x.Name).Select(x => x.First().Name).ToListAsync();
         CoverLetterGroups = await _context.CoverLetters.GroupBy(x => x.Name).Select(x => x.First().Name).ToListAsync();
+        Prompts = await _context.Prompts.Select(x => x.Name).ToListAsync();
     }
 
     public async Task OnGetAsync()

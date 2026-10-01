@@ -28,9 +28,14 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreatePromptInput input)
     {
+        if (await _context.Prompts.AnyAsync(p => p.Name == input.Name))
+        {
+            ModelState.AddModelError("CreateInput.Name", "A prompt with this name already exists.");
+        }
+
         if (!ModelState.IsValid)
         {
-            await LoadProperties();   
+            await LoadProperties();
             return Page();
         }
 
@@ -43,7 +48,7 @@ public class IndexModel : PageModel
         };
 
         _context.Prompts.Add(prompt);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return RedirectToPage();
     }
