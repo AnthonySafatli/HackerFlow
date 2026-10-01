@@ -1,40 +1,40 @@
 # HackerFlow
 
-HackerFlow is an app that I created to automate the flow I have for j*b applications
+HackerFlow is an app I built to automate how I apply for jobs.
 
-The flow I usually use is duplicating a base cover letter I created, then customizing it using AI based on my resume and the given job description.
+My usual flow is to duplicate a base cover letter, then customize it with AI using my resume and the job description.
 
-This application automates this process, and organizes all the jobs, job descriptions, links, and files for me.
+This app automates that process and keeps all my jobs, descriptions, links, and files in one place.
 
-It also allows for multiple base resumes and cover letters, which will help me create more custom versions of each for whatever the job is.
+It also supports multiple base resumes and cover letters, so I can create more tailored versions for each job.
 
 ## Features
 
 ### Job Tracker
 
-This has a table with any jobs I am interested in. It holds all important info related to the job, and tracks the status of that job as I go through the application process.
+A table of all the jobs I'm interested in. It holds the important info for each job and tracks its status as I move through the application process.
 
-Each application also has its own resume and cover letter attached to it. This helps me copy and store each on a per job basis. 
+Each application has its own resume and cover letter attached, so I can copy and store them per job.
 
-I can also create custom AI prompts by injecting the resume, cover letter, and job description into a premade prompt, automating that process.
+I can also build custom AI prompts by injecting the resume, cover letter, and job description into a premade prompt. This automates that step too.
 
 ### Resumes
 
-This holds my base resumes. Each resume has a name, and to update a resume I can just upload the updated version using the same name to add a new version to HackerFlow. All versions of resumes are stored in the app.
+This holds my base resumes. Each resume has a name. To update one, I just upload the new version with the same name and it gets added as a new version. All versions are kept in the app.
 
 ### Cover Letters
 
-The cover letter features are identical to the resume features.
+Cover letters work the same way as resumes.
 
 ### Prompts
 
-I can store my prompts for AI cover letter generation. These can include placeholders into the prompt where I can dynamically inject the `{{resume}}`, `{{coverLetter}}` or `{{jobDescription}}`
+I can save my prompts for AI cover letter generation. They can include placeholders like `{{resume}}`, `{{coverLetter}}`, or `{{jobDescription}}`, which get filled in automatically.
 
 ## Installation and Usage
 
-I use Linux as my daily driver, and so this setup is for a Linux machine. I am sure it would be easy to setup on any machine though
+I use Linux as my daily driver, so this setup is for Linux. It should be easy to set up on other systems too.
 
-First clone the project and ensure `dotnet-sdk` and `aspnet-runtime` are installed.
+First, clone the project and make sure `dotnet-sdk` and `aspnet-runtime` are installed.
 
 Next, add this script to `~/.local/bin/hackerflow`
 
@@ -102,17 +102,17 @@ case "${1:-start}" in
 esac
 ```
 
-Make sure this file has the correct permissions with
+Make the file executable with
 
 ```bash
 chmod +x ~/.local/bin/hackerflow
 ```
 
-Congrats, HackerFlow is now installed on your Linux machine.
+That's it, HackerFlow is now installed on your Linux machine.
 
 ### Commands
 
-These commands are available to you using this script
+Here are the commands the script gives you
 
 ```bash
 hackerflow install     # first-time publish
@@ -123,4 +123,29 @@ hackerflow status
 hackerflow logs        # Ctrl+C to exit
 hackerflow update      # stop, rebuild, restart if it was running
 hackerflow uninstall
+```
+
+## Uninstalling
+
+To remove HackerFlow, run
+
+```bash
+hackerflow uninstall
+```
+
+This stops the app and deletes the install folder (`~/apps/hackerflow`) and the state folder (`~/.local/state/hackerflow`).
+
+**Heads up:** the SQLite database (`hackerflow.db`) lives in the install folder, so uninstalling deletes all your jobs and their info. If you want to keep it, copy it somewhere safe first
+
+```bash
+cp ~/apps/hackerflow/hackerflow.db ~/hackerflow-backup.db
+```
+
+Your resumes and cover letters are stored separately (by default in `~/Documents/HackerFlowDocs`), so they are not touched. If you want to remove those too, delete that folder yourself.
+
+The script and source code are also left alone. To fully clean up, remove them too
+
+```bash
+rm ~/.local/bin/hackerflow
+rm -rf ~/source/HackerFlow
 ```
