@@ -217,7 +217,8 @@
                                          Label = "Copy Prompt",
                                          Url = $"/api/applications/{Model.JobApplicaiton.Id}/create-prompt",
                                          Items = Model.Prompts,
-                                         Handler = "copyPrompt"
+                                         Handler = "copyPrompt",
+                                         ParamName = "name"
                                      })" />
 
                             @if ((int)Model.JobApplicaiton.Status < 5)

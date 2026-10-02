@@ -98,8 +98,11 @@ public class ApplicationsController : ControllerBase
     
 
     [HttpPost("{id}/create-prompt")]
-    public async Task<IActionResult> CreatePrompt(int id, string name, CancellationToken ct)
+    public async Task<IActionResult> CreatePrompt(int id, [FromQuery] string? name, CancellationToken ct)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Prompt name is required.");
+
         var application = await _context.Applications.FindAsync(id);
         if (application == null)
             return NotFound();
@@ -120,7 +123,7 @@ public class ApplicationsController : ControllerBase
             result = result.Replace("{{coverLetter}}", coverLetterText);
 
         if (!string.IsNullOrWhiteSpace(application.JobDescription))
-            result.Replace("{{jobDescription}}", application.JobDescription);
+            result = result.Replace("{{jobDescription}}", application.JobDescription);
         
         return Ok(new { prompt = result });
     }
