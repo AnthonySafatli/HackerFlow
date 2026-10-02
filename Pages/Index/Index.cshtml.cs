@@ -154,10 +154,10 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostOpenCoverLetterAsync(int id)
     {
         var application = await _context.Applications.FindAsync(id);
-        if (string.IsNullOrWhiteSpace(application?.ResumePath) || !System.IO.File.Exists(application.ResumePath))
+        if (string.IsNullOrWhiteSpace(application?.CoverLetterPath) || !System.IO.File.Exists(application.CoverLetterPath))
             return NotFound();
 
-        _openFile.OpenFile(application.ResumePath);
+        _openFile.OpenFile(application.CoverLetterPath);
 
         // stays on the current page
         return new NoContentResult(); 
