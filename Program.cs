@@ -13,6 +13,7 @@ builder.Services.AddDbContext<HackerFlowContext>(options =>
 builder.Services.AddScoped<IAppSettingsService, AppSettingsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IOpenFileService, OpenFileService>();
+builder.Services.AddScoped<IDocumentTextExtractor, DocumentTextExtractor>();
 
 var app = builder.Build();
 
