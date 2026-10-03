@@ -50,6 +50,9 @@
                 <tbody>
                     @foreach (var application in Model.Applications)
                     {
+                        var uri = new Uri(application.Url);
+                        string origin = uri.GetLeftPart(UriPartial.Authority);
+
                         <tr class="pointer" data-status="@application.Status.ToString().ToLowerInvariant()"
                             data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
@@ -59,7 +62,7 @@
 
                                 <a href="@application.Url" target="_blank" rel="noopener noreferrer"
                                    class="small text-secondary text-decoration-none">
-                                    @application.Url
+                                    @(origin + "/...")
                                 </a>
                             </td>
 
