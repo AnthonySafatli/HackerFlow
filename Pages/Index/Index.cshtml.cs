@@ -12,12 +12,14 @@ public class IndexModel : PageModel
 {
     private readonly HackerFlowContext _context;
     private readonly IFileService _file;
+    private readonly IAppSettingsService _settings;
     private readonly IOpenFileService _openFile;
 
-    public IndexModel(HackerFlowContext context, IFileService file, IOpenFileService openFile)
+    public IndexModel(HackerFlowContext context, IFileService file, IAppSettingsService settings, IOpenFileService openFile)
     {
         _context = context;
         _file = file;
+        _settings = settings;
         _openFile = openFile;
     }
 
@@ -104,6 +106,74 @@ public class IndexModel : PageModel
             return RedirectToPage();
 
         application.Status += 1;
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostGenerateResumeAsync(int id, string group)
+    {
+        var application = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(application.ResumePath))
+            return BadRequest();
+
+        var resume = await _context.Resumes
+            .Where(x => x.Name == group)
+            .OrderByDescending(x => x.Version)
+            .FirstOrDefaultAsync();
+        if (resume == null)
+            return NotFound();
+
+        var resumeData = await _file.ReadAsync(resume.FilePath);
+        if (resumeData == null)
+            return BadRequest();
+
+        var ext = Path.GetExtension(resume.FilePath).ToLowerInvariant();
+        var resumeFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
+        var resumeName = $"{application.Company}_{application.Role}_Resume_{Guid.NewGuid()}{ext}";
+
+        var resumePath = await _file.SaveAsync(resumeFolder, resumeName, resumeData);
+        if (resumePath == null) 
+            return BadRequest();
+
+        application.ResumePath = resumePath;
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> GenerateCoverLetter(int id, string group)
+    {
+        var application = await _context.Applications.FindAsync(id);
+        if (application == null)
+            return NotFound();
+
+        if (!string.IsNullOrWhiteSpace(application.CoverLetterPath))
+            return BadRequest();
+
+        var coverLetter = await _context.CoverLetters
+            .Where(x => x.Name == group)
+            .OrderByDescending(x => x.Version)
+            .FirstOrDefaultAsync();
+        if (coverLetter == null)
+            return NotFound();
+
+        var coverLetterData = await _file.ReadAsync(coverLetter.FilePath);
+        if (coverLetterData == null)
+            return BadRequest();
+
+        var ext = Path.GetExtension(coverLetter.FilePath).ToLowerInvariant();
+        var coverLetterFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
+        var coverLetterName = $"{application.Company}_{application.Role}_CoverLetter_{Guid.NewGuid()}{ext}";
+
+        var coverLetterPath = await _file.SaveAsync(coverLetterFolder, coverLetterName, coverLetterData);
+        if (coverLetterPath == null) 
+            return BadRequest();
+
+        application.CoverLetterPath = coverLetterPath;
         await _context.SaveChangesAsync();
 
         return RedirectToPage();

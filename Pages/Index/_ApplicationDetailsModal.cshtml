@@ -189,25 +189,55 @@
                         <div class="hf-modal-actions">
                             <div class="hf-modal-actions-label">Actions</div>
 
-                            <partial name="_ActionDropdown" model="@(new ActionDropdownVM
-                                     {
-                                         CssClass = "btn-hf-primary",
-                                         Label = "Generate Resume",
-                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-resume",
-                                         Items = Model.ResumeGroups,
-                                         Handler = "resumeGenerated",
-                                         Disabled = !string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath)
-                                     })" />
+                            <div class="dropdown">
+                                <button class="btn btn-hf-primary w-100 dropdown-toggle hf-dropdown-btn" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                        disabled="@(!string.IsNullOrWhiteSpace(Model.JobApplicaiton.ResumePath))">
+                                    <span class="hf-action-label">Generate Resume</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var item in Model.ResumeGroups)
+                                    {
+                                        <li>
+                                            <form asp-page-handler="GenerateResume" method="post">
+                                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                                <input type="hidden" name="group" value="@item" />
+                                                <button type="submit" class="dropdown-item">@item</button>
+                                            </form>
+                                        </li>
+                                    }
 
-                            <partial name="_ActionDropdown" model="@(new ActionDropdownVM
-                                     {
-                                         CssClass = "btn-hf-primary",
-                                         Label = "Generate Cover Letter",
-                                         Url = $"/api/applications/{Model.JobApplicaiton.Id}/generate-cover-letter",
-                                         Items = Model.CoverLetterGroups,
-                                         Handler = "coverLetterGenerated",
-                                         Disabled = !string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath)
-                                     })" />
+                                    @if (!Model.ResumeGroups.Any())
+                                    {
+                                        <li><a class="dropdown-item disabled" href="#">No Items Found</a></li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <div class="dropdown">
+                                <button class="btn btn-hf-primary w-100 dropdown-toggle hf-dropdown-btn" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false"
+                                        disabled="@(!string.IsNullOrWhiteSpace(Model.JobApplicaiton.CoverLetterPath))">
+                                    <span class="hf-action-label">Generate Cover Letter</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var item in Model.CoverLetterGroups)
+                                    {
+                                        <li>
+                                            <form asp-page-handler="GenerateCoverLetter" method="post">
+                                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                                <input type="hidden" name="group" value="@item" />
+                                                <button type="submit" class="dropdown-item">@item</button>
+                                            </form>
+                                        </li>
+                                    }
+
+                                    @if (!Model.CoverLetterGroups.Any())
+                                    {
+                                        <li><a class="dropdown-item disabled" href="#">No Items Found</a></li>
+                                    }
+                                </ul>
+                            </div>
 
                             <br />
 
