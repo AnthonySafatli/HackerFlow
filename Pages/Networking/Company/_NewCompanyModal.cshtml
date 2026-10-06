@@ -1,0 +1,47 @@
+<div class="modal fade" id="newCompanyModal" tabindex="-1" aria-labelledby="newCompanyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content hf-modal">
+            <form asp-page-handler="CreateCompany" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newCompanyModalLabel">New Company</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newCompany-name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="newCompany-name" name="CreateCompanyInput.Name"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newCompany-website" class="form-label">Website</label>
+                        <input type="url" class="form-control" id="newCompany-website"
+                               name="CreateCompanyInput.Website" placeholder="https://" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newCompany-referral" class="form-label">Referral Chance</label>
+                        <select class="form-select" id="newCompany-referral" name="CreateCompanyInput.ReferralChance">
+                            <option value="Low" selected>Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newCompany-description" class="form-label">Description</label>
+                        <textarea class="form-control" id="newCompany-description"
+                                  name="CreateCompanyInput.Description" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Add Company</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

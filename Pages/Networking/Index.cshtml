@@ -1,0 +1,248 @@
+@page
+@model IndexModel
+@using HackerFlow.Models
+
+@{
+    ViewData["Title"] = "Networking";
+
+    string LevelText(ConnectionLevel level) => level switch
+    {
+        ConnectionLevel.Direct => "Direct",
+        ConnectionLevel.First => "1st",
+        ConnectionLevel.Second => "2nd",
+        ConnectionLevel.Third => "3rd",
+        _ => level.ToString()
+    };
+
+    string CloseBadge(Closeness c) => c switch
+    {
+        Closeness.VeryClose => "text-bg-success",
+        Closeness.Close => "text-bg-info",
+        Closeness.Familiar => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+
+    string ReferralBadge(ReferralChance r) => r switch
+    {
+        ReferralChance.High => "text-bg-success",
+        ReferralChance.Medium => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+}
+
+<div>
+    <!-- Page header -->
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Networking</h1>
+            <p class="text-secondary mb-0">Track your connections and the companies they link you to.</p>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
+                    data-bs-target="#newConnectionModal">
+                New Connection <span class="ms-1">+</span>
+            </button>
+            <button type="button" class="btn btn-outline-secondary px-4" data-bs-toggle="modal"
+                    data-bs-target="#newCompanyModal">
+                New Company <span class="ms-1">+</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" id="networkingTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="connections-tab" data-bs-toggle="tab" data-bs-target="#connections-pane"
+                    type="button" role="tab" aria-controls="connections-pane" aria-selected="true">
+                Connections <span class="badge text-bg-secondary ms-1">@Model.Connections.Count()</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies-pane"
+                    type="button" role="tab" aria-controls="companies-pane" aria-selected="false">
+                Companies <span class="badge text-bg-secondary ms-1">@Model.Companies.Count()</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="networkingTabsContent">
+
+        <!-- Connections -->
+        <div class="tab-pane fade show active" id="connections-pane" role="tabpanel" aria-labelledby="connections-tab"
+             tabindex="0">
+            @if (!Model.Connections.Any())
+            {
+                <div class="card hf-card">
+                    <div class="card-body text-center text-secondary py-4">No connections yet.</div>
+                </div>
+            }
+            else
+            {
+                <div class="card hf-card">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Company(s)</th>
+                                    <th scope="col">Closeness</th>
+                                    <th scope="col">Level</th>
+                                    <th scope="col">Can Introduce Me</th>
+                                    <th scope="col">Introduced By</th>
+                                    <th scope="col">Introduced</th>
+                                    <th scope="col">Last Contact</th>
+                                    <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Connections)
+                                {
+                                    <tr>
+                                        <td class="fw-medium">@c.Name</td>
+                                        <td>
+                                            @if (c.Companies.Any())
+                                            {
+                                                @foreach (var company in c.Companies)
+                                                {
+                                                    <span class="badge text-bg-secondary me-1">@company.Name</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-secondary">—</span>
+                                            }
+                                        </td>
+                                        <td><span class="badge @CloseBadge(c.Closeness)">@c.Closeness</span></td>
+                                        <td><span class="text-secondary">@LevelText(c.Level)</span></td>
+                                        <td>
+                                            <span class="badge @(c.CanIntroduceMe ? "text-bg-success" : "text-bg-secondary")">
+                                                @(c.CanIntroduceMe ? "Yes" : "No")
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary">@(c.IntroducedBy?.Name ?? "—")</span>
+                                        </td>
+                                        <td>
+                                            @if (c.IntroducedTo.Any())
+                                            {
+                                                <span class="text-secondary"
+                                                      title="@string.Join(", ", c.IntroducedTo.Select(i => i.Name))">
+                                                    @c.IntroducedTo.Count
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-secondary">—</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary">
+                                                @(c.LastContactAt?.ToString("MMM d, yyyy") ?? "Never")
+                                            </span>
+                                        </td>
+                                        <td class="text-end text-nowrap">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm me-1"
+                                                    data-bs-toggle="modal" data-bs-target="#editConnectionModal-@c.Id">
+                                                Edit
+                                            </button>
+
+                                            <form method="post" asp-page-handler="DeleteConnection" asp-route-id="@c.Id"
+                                                  class="d-inline" onsubmit="return confirm('Delete @c.Name?');">
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Companies -->
+        <div class="tab-pane fade" id="companies-pane" role="tabpanel" aria-labelledby="companies-tab" tabindex="0">
+            @if (!Model.Companies.Any())
+            {
+                <div class="card hf-card">
+                    <div class="card-body text-center text-secondary py-4">No companies yet.</div>
+                </div>
+            }
+            else
+            {
+                <div class="card hf-card">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Connection Amount</th>
+                                    <th scope="col">Referral Chance</th>
+                                    <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var company in Model.Companies)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-medium">
+                                                @if (!string.IsNullOrWhiteSpace(company.Website))
+                                                {
+                                                    <a href="@company.Website" target="_blank" rel="noopener"
+                                                       class="text-reset text-decoration-none">@company.Name</a>
+                                                }
+                                                else
+                                                {
+                                                    @company.Name
+                                                }
+                                            </div>
+                                            <div class="small text-secondary">@company.Description</div>
+                                        </td>
+                                        <td><span class="text-secondary">@company.Connections.Count</span></td>
+                                        <td>
+                                            <span
+                                            class="badge @ReferralBadge(company.ReferralChance)">@company.ReferralChance</span>
+                                        </td>
+                                        <td class="text-end text-nowrap">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm me-1"
+                                                    data-bs-toggle="modal" data-bs-target="#editCompanyModal-@company.Id">
+                                                Edit
+                                            </button>
+
+                                            <form method="post" asp-page-handler="DeleteCompany" asp-route-id="@company.Id"
+                                                  class="d-inline" onsubmit="return confirm('Delete @company.Name?');">
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Modals {
+    <partial name="Connection/_NewConnectionModal" />
+    <partial name="Company/_NewCompanyModal" />
+    
+    @* 
+    @foreach (var c in Model.Connections)
+    {
+        <partial name="Connection/_EditConnectionModal" model="c" />
+    }
+
+    @foreach (var company in Model.Companies)
+    {
+        <partial name="Company/_EditCompanyModal" model="company" />
+    } *@
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+}

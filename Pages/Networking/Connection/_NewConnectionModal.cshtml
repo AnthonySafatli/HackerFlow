@@ -1,0 +1,151 @@
+@model IndexModel
+@using HackerFlow.Models
+
+<div class="modal fade" id="newConnectionModal" tabindex="-1" aria-labelledby="newConnectionModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content hf-modal">
+            <form asp-page-handler="CreateConnection" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newConnectionModalLabel">New Connection</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newConn-name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="newConn-name" name="CreateConnectionInput.Name"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newConn-companyInput" class="form-label">Company(s)</label>
+                        <div id="newConn-companyChips" class="d-flex flex-wrap gap-1 mb-2"></div>
+                        <input type="text" class="form-control" id="newConn-companyInput"
+                               list="newConn-companyOptions" placeholder="Type or pick a company, then press Enter"
+                               autocomplete="off" />
+                        <datalist id="newConn-companyOptions">
+                            @foreach (var company in Model.Companies)
+                            {
+                                <option value="@company.Name"></option>
+                            }
+                        </datalist>
+                        <div class="form-text">New companies are created automatically.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="newConn-closeness" class="form-label">Closeness</label>
+                            <select class="form-select" id="newConn-closeness" name="CreateConnectionInput.Closeness">
+                                <option value="Weak" selected>Weak</option>
+                                <option value="Familiar">Familiar</option>
+                                <option value="Close">Close</option>
+                                <option value="VeryClose">Very Close</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="newConn-level" class="form-label">Connection Level</label>
+                            <select class="form-select" id="newConn-level" name="CreateConnectionInput.Level">
+                                <option value="Direct" selected>Direct</option>
+                                <option value="First">1st</option>
+                                <option value="Second">2nd</option>
+                                <option value="Third">3rd</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newConn-introducedBy" class="form-label">Introduced By</label>
+                        <select class="form-select" id="newConn-introducedBy"
+                                name="CreateConnectionInput.IntroducedById">
+                            <option value="" selected>None</option>
+                            @foreach (var connection in Model.Connections)
+                            {
+                                <option value="@connection.Id">@connection.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="newConn-connectedAt" class="form-label">Connected On</label>
+                            <input type="date" class="form-control" id="newConn-connectedAt"
+                                   name="CreateConnectionInput.ConnectedAt" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="newConn-lastContact" class="form-label">Last Contact</label>
+                            <input type="date" class="form-control" id="newConn-lastContact"
+                                   name="CreateConnectionInput.LastContactAt" />
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="hidden" name="CreateConnectionInput.CanIntroduceMe" value="false" />
+                        <input class="form-check-input" type="checkbox" id="newConn-canIntroduce"
+                               name="CreateConnectionInput.CanIntroduceMe" value="true" />
+                        <label class="form-check-label" for="newConn-canIntroduce">Can introduce me</label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Add Connection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const input = document.getElementById('newConn-companyInput');
+        const chips = document.getElementById('newConn-companyChips');
+        const form = input.closest('form');
+        const added = new Set();
+
+        function addCompany(raw) {
+            const name = raw.trim();
+            const key = name.toLowerCase();
+            if (!name || added.has(key)) return;
+            added.add(key);
+
+            const chip = document.createElement('span');
+            chip.className = 'badge text-bg-secondary d-inline-flex align-items-center gap-1';
+            chip.append(name);
+
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'CreateConnectionInput.CompanyNames';
+            hidden.value = name;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn-close btn-close-white';
+            remove.style.fontSize = '0.6rem';
+            remove.setAttribute('aria-label', 'Remove ' + name);
+            remove.addEventListener('click', function () {
+                added.delete(key);
+                chip.remove();
+            });
+
+            chip.append(remove, hidden);
+            chips.appendChild(chip);
+        }
+
+        function commit() {
+            addCompany(input.value);
+            input.value = '';
+        }
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                commit();
+            }
+        });
+        input.addEventListener('change', commit);
+        form.addEventListener('submit', commit);
+    })();
+</script>
