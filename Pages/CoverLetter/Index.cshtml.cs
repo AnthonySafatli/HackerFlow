@@ -38,7 +38,7 @@ public class IndexModel : PageModel
     {
         CoverLetters = await _context.CoverLetters.ToListAsync();
         CoverLetterFolder = await _settings.GetSetting(AppSetting.CoverLetterFolder);
-        GeneratedCoverLetterFolder = await _settings.GetSetting(AppSetting.GerenatedCoverLetterFolder);
+        GeneratedCoverLetterFolder = await _settings.GetSetting(AppSetting.GeneratedCoverLetterFolder);
     }
 
     public async Task OnGetAsync()
@@ -119,7 +119,7 @@ public class IndexModel : PageModel
         }
 
         await _context.SaveChangesAsync();
-        await _settings.SetSetting(AppSetting.GerenatedCoverLetterFolder, newFolder);
+        await _settings.SetSetting(AppSetting.GeneratedCoverLetterFolder, newFolder);
 
         return RedirectToPage();
     }
