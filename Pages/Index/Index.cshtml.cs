@@ -106,6 +106,9 @@ public class IndexModel : PageModel
             return RedirectToPage();
 
         application.Status += 1;
+        if (application.Status == ApplicationStatus.Applied)
+            application.DateApplied = DateTime.Now;
+
         await _context.SaveChangesAsync();
 
         return RedirectToPage();
