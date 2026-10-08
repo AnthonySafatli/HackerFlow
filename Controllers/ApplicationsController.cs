@@ -1,7 +1,5 @@
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using HackerFlow.Data;
-using HackerFlow.Models;
 using HackerFlow.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -81,8 +79,10 @@ public class ApplicationsController : ControllerBase
         var roleName = Regex.Replace(application.Role, "[^a-zA-Z0-9_-]", "");
 
         var packageFolder = $"~/Downloads/{companyName}_{roleName}_Package";
-        var resumeName = $"AnthonySafatli_Resume_{companyName}";
-        var coverLetterName = $"AnthonySafatli_CoverLetter_{companyName}";
+        var resumeExt = Path.GetExtension(application.ResumePath).ToLowerInvariant();
+        var coverLetterExt = Path.GetExtension(application.CoverLetterPath).ToLowerInvariant();
+        var resumeName = $"AnthonySafatli_Resume_{companyName}{resumeExt}";
+        var coverLetterName = $"AnthonySafatli_CoverLetter_{companyName}{coverLetterExt}";
 
         var saveTasks = new List<Task>();
 
