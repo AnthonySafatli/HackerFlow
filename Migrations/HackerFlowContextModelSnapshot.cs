@@ -147,13 +147,11 @@ namespace HackerFlow.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Company")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ContactId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CoverLetterPath")
                         .IsRequired()
@@ -193,6 +191,10 @@ namespace HackerFlow.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ContactId");
 
                     b.ToTable("Applications");
                 });
@@ -275,6 +277,23 @@ namespace HackerFlow.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("IntroducedBy");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.JobApplication", b =>
+                {
+                    b.HasOne("HackerFlow.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HackerFlow.Models.Connection", "Contact")
+                        .WithMany()
+                        .HasForeignKey("ContactId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Contact");
                 });
 
             modelBuilder.Entity("HackerFlow.Models.Connection", b =>

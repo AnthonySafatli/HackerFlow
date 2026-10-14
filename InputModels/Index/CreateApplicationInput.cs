@@ -5,7 +5,7 @@ namespace HackerFlow.InputModels.Index;
 
 public class CreatePromptInput
 {
-    [Required] 
+    [Required]
     public string Company { get; set; } = "";
 
     [Required]

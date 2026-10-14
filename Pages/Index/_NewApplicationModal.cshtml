@@ -1,3 +1,5 @@
+@model HackerFlow.Pages.Index.IndexModel
+
 <div class="modal fade" id="newApplicationModal" tabindex="-1" aria-labelledby="newApplicationModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
@@ -12,7 +14,13 @@
                     <div class="mb-3">
                         <label for="newApp-company" class="form-label">Company</label>
                         <input type="text" class="form-control" id="newApp-company" name="CreateInput.Company"
-                               required />
+                               list="existingCompanies" required />
+                        <datalist id="existingCompanies">
+                            @foreach (var company in Model.Companies)
+                            {
+                                <option value="@company" />
+                            }
+                        </datalist>
                     </div>
 
                     <div class="mb-3">
@@ -48,6 +56,7 @@
                             <datalist id="applicationMethods">
                                 <option value="Company site" />
                                 <option value="LinkedIn" />
+                                <option value="Indeed" />
                                 <option value="Referral" />
                                 <option value="Job board" />
                                 <option value="Email" />
@@ -58,6 +67,12 @@
                     <div class="mb-3">
                         <label for="newApp-contact" class="form-label">Contact</label>
                         <input type="text" class="form-control" id="newApp-contact" name="CreateInput.Contact" />
+                        <datalist id="existingContacts">
+                            @foreach (var contact in Model.Contacts)
+                            {
+                                <option value="@contact" />
+                            }
+                        </datalist>
                     </div>
 
                     <div class="mb-3">

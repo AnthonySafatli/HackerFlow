@@ -57,7 +57,7 @@
                             data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">
-                                    @application.Company
+                                    @application.Company.Name
                                 </div>
 
                                 <a href="@application.Url" target="_blank" rel="noopener noreferrer"
@@ -98,10 +98,10 @@
                             </td>
 
                             <td>
-                                @if (!string.IsNullOrWhiteSpace(application.Contact))
+                                @if (!string.IsNullOrWhiteSpace(application.Contact?.Name))
                                 {
                                     <span class="text-secondary">
-                                        @application.Contact
+                                        @application.Contact.Name
                                     </span>
                                 }
                                 else

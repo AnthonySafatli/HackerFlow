@@ -4,7 +4,8 @@ public class JobApplication
 {
     public int Id { get; set; }
 
-    public string Company { get; set; } = "";
+    public Company Company { get; set; } = new Company();
+    public int CompanyId { get; set; }
 
     public string Role { get; set; } = "";
 
@@ -20,7 +21,8 @@ public class JobApplication
 
     public ApplicationStatus Status { get; set; } = ApplicationStatus.Bookmarked;
 
-    public string Contact { get; set; } = "";
+    public Connection? Contact { get; set; }
+    public int? ContactId { get; set; }
 
     public string Notes { get; set; } = "";
 

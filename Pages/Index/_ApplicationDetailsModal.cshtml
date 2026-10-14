@@ -111,8 +111,8 @@
                                 <div class="hf-detail-row">
                                     <div class="hf-detail-label">Contact</div>
                                     <div class="hf-detail-value">
-                                        @(string.IsNullOrWhiteSpace(Model.JobApplicaiton.Contact) ? "—" :
-                                        Model.JobApplicaiton.Contact)</div>
+                                        @(string.IsNullOrWhiteSpace(Model.JobApplicaiton.Contact?.Name) ? "—" :
+                                        Model.JobApplicaiton.Contact.Name)</div>
                                     </div>
 
                                     <div class="hf-detail-row">
