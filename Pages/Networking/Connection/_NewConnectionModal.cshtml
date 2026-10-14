@@ -1,5 +1,4 @@
 @model IndexModel
-@using HackerFlow.Models
 
 <div class="modal fade" id="newConnectionModal" tabindex="-1" aria-labelledby="newConnectionModalLabel"
      aria-hidden="true">
@@ -21,9 +20,8 @@
                     <div class="mb-3">
                         <label for="newConn-companyInput" class="form-label">Company(s)</label>
                         <div id="newConn-companyChips" class="d-flex flex-wrap gap-1 mb-2"></div>
-                        <input type="text" class="form-control" id="newConn-companyInput"
-                               list="newConn-companyOptions" placeholder="Type or pick a company, then press Enter"
-                               autocomplete="off" />
+                        <input type="text" class="form-control" id="newConn-companyInput" list="newConn-companyOptions"
+                               placeholder="Type or pick a company, then press Enter" autocomplete="off" />
                         <datalist id="newConn-companyOptions">
                             @foreach (var company in Model.Companies)
                             {
@@ -82,10 +80,10 @@
                     </div>
 
                     <div class="form-check">
-                        <input type="hidden" name="CreateConnectionInput.CanIntroduceMe" value="false" />
                         <input class="form-check-input" type="checkbox" id="newConn-canIntroduce"
                                name="CreateConnectionInput.CanIntroduceMe" value="true" />
                         <label class="form-check-label" for="newConn-canIntroduce">Can introduce me</label>
+                        <input type="hidden" name="CreateConnectionInput.CanIntroduceMe" value="false" />
                     </div>
                 </div>
 

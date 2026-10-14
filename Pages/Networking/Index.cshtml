@@ -28,6 +28,9 @@
         ReferralChance.Medium => "text-bg-warning",
         _ => "text-bg-secondary"
     };
+
+    ViewData["AllConnections"] = Model.Connections;
+    ViewData["AllCompanies"] = Model.Companies;
 }
 
 <div>
@@ -231,7 +234,6 @@
     <partial name="Connection/_NewConnectionModal" />
     <partial name="Company/_NewCompanyModal" />
     
-    @* 
     @foreach (var c in Model.Connections)
     {
         <partial name="Connection/_EditConnectionModal" model="c" />
@@ -240,7 +242,7 @@
     @foreach (var company in Model.Companies)
     {
         <partial name="Company/_EditCompanyModal" model="company" />
-    } *@
+    }
 }
 
 @section Styles {

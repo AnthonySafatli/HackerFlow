@@ -33,6 +33,35 @@ public class IndexModel : PageModel
             .ToListAsync();
     }
 
+    private async Task<List<Models.Company>> ResolveCompaniesAsync(IEnumerable<string>? names)
+    {
+        var companies = new List<Models.Company>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var raw in names ?? [])
+        {
+            var name = raw?.Trim();
+            if (string.IsNullOrEmpty(name) || !seen.Add(name))
+            {
+                continue;
+            }
+
+            var lower = name.ToLower();
+            var company = await _context.Companies
+                .FirstOrDefaultAsync(c => c.Name.ToLower() == lower);
+
+            if (company == null)
+            {
+                company = new Models.Company { Name = name };
+                _context.Companies.Add(company);
+            }
+
+            companies.Add(company);
+        }
+
+        return companies;
+    }
+
     public async Task OnGetAsync()
     {
         await LoadProperties();
@@ -42,41 +71,21 @@ public class IndexModel : PageModel
     {
         if (!ModelState.IsValid)
         {
-            await LoadProperties();   
+            await LoadProperties();
             return Page();
         }
 
-        var introducedByConnection = await _context.Connections
-            .FirstOrDefaultAsync(c => c.Id == input.IntroducedById);
-        if (input.IntroducedById.HasValue && introducedByConnection == null)
+        if (input.IntroducedById.HasValue &&
+            !await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
         {
             await LoadProperties();
             return Page();
         }
 
-        var companies = new List<Models.Company>();
-        foreach (var companyName in input.CompanyNames)
-        {
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(c => c.Name == companyName);
-
-            if (company == null)
-            {
-                company = new Models.Company
-                {
-                    Name = companyName
-                };
-
-                _context.Companies.Add(company);
-            }
-                
-            companies.Add(company);
-        }
-
         var connection = new Models.Connection
         {
             Name = input.Name,
-            Companies = companies,
+            Companies = await ResolveCompaniesAsync(input.CompanyNames),
             Closeness = input.Closeness,
             Level = input.Level,
             IntroducedById = input.IntroducedById,
@@ -91,11 +100,70 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostUpdateConnectionAsync([FromForm(Name = "UpdateConnectionInput")] UpdateConnectionInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            await LoadProperties();
+            return Page();
+        }
+
+        var connection = await _context.Connections
+            .Include(c => c.Companies)
+            .FirstOrDefaultAsync(c => c.Id == input.Id);
+
+        if (connection == null)
+        {
+            return NotFound();
+        }
+
+        // Can't be introduced by yourself, and the introducer has to exist
+        if (input.IntroducedById.HasValue &&
+            (input.IntroducedById == input.Id ||
+             !await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById)))
+        {
+            await LoadProperties();
+            return Page();
+        }
+
+        connection.Name = input.Name;
+        connection.Closeness = input.Closeness;
+        connection.Level = input.Level;
+        connection.CanIntroduceMe = input.CanIntroduceMe;
+        connection.IntroducedById = input.IntroducedById;
+        connection.ConnectedAt = input.ConnectedAt;
+        connection.LastContactAt = input.LastContactAt;
+
+        connection.Companies.Clear();
+        connection.Companies.AddRange(await ResolveCompaniesAsync(input.CompanyNames));
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteConnectionAsync(int id)
+    {
+        var connection = await _context.Connections
+            .Include(c => c.IntroducedTo)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (connection == null)
+        {
+            return NotFound();
+        }
+
+        _context.Connections.Remove(connection);
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
     public async Task<IActionResult> OnPostCreateCompanyAsync([FromForm(Name = "CreateCompanyInput")] CreateCompanyInput input)
     {
         if (!ModelState.IsValid)
         {
-            await LoadProperties();   
+            await LoadProperties();
             return Page();
         }
 
@@ -108,6 +176,46 @@ public class IndexModel : PageModel
         };
 
         _context.Companies.Add(company);
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateCompanyAsync([FromForm(Name = "UpdateCompanyInput")] UpdateCompanyInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            await LoadProperties();
+            return Page();
+        }
+
+        var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == input.Id);
+
+        if (company == null)
+        {
+            return NotFound();
+        }
+
+        company.Name = input.Name;
+        company.Website = input.Website;
+        company.ReferralChance = input.ReferralChance;
+        company.Description = input.Description;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteCompanyAsync(int id)
+    {
+        var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (company == null)
+        {
+            return NotFound();
+        }
+
+        _context.Companies.Remove(company);
         await _context.SaveChangesAsync();
 
         return RedirectToPage();
