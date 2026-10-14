@@ -21,8 +21,8 @@ public class JobApplication
 
     public ApplicationStatus Status { get; set; } = ApplicationStatus.Bookmarked;
 
-    public Connection? Contact { get; set; }
-    public int? ContactId { get; set; }
+    public Connection? Connection { get; set; }
+    public int? ConnectionId { get; set; }
 
     public string Notes { get; set; } = "";
 

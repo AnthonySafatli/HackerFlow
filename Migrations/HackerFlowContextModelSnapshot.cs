@@ -150,7 +150,7 @@ namespace HackerFlow.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ContactId")
+                    b.Property<int?>("ConnectionId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CoverLetterPath")
@@ -194,7 +194,7 @@ namespace HackerFlow.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("ConnectionId");
 
                     b.ToTable("Applications");
                 });
@@ -287,13 +287,13 @@ namespace HackerFlow.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HackerFlow.Models.Connection", "Contact")
+                    b.HasOne("HackerFlow.Models.Connection", "Connection")
                         .WithMany()
-                        .HasForeignKey("ContactId");
+                        .HasForeignKey("ConnectionId");
 
                     b.Navigation("Company");
 
-                    b.Navigation("Contact");
+                    b.Navigation("Connection");
                 });
 
             modelBuilder.Entity("HackerFlow.Models.Connection", b =>

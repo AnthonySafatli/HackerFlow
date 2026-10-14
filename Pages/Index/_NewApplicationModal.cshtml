@@ -65,12 +65,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="newApp-contact" class="form-label">Contact</label>
-                        <input type="text" class="form-control" id="newApp-contact" name="CreateInput.Contact" />
-                        <datalist id="existingContacts">
-                            @foreach (var contact in Model.Contacts)
+                        <label for="newApp-connection" class="form-label">Connection</label>
+                        <input type="text" class="form-control" id="newApp-connection" name="CreateInput.Connection" />
+                        <datalist id="existingConnections">
+                            @foreach (var connection in Model.Connections)
                             {
-                                <option value="@contact" />
+                                <option value="@connection" />
                             }
                         </datalist>
                     </div>

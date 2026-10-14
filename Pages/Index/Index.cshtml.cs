@@ -28,13 +28,13 @@ public class IndexModel : PageModel
     public List<string> CoverLetterGroups { get; private set; } = [];
     public List<string> Prompts { get; private set; } = [];
     public List<string> Companies { get; private set; } = [];
-    public List<string> Contacts { get; private set; } = [];
+    public List<string> Connections { get; private set; } = [];
 
     private async Task LoadProperties()
     {
         Applications = await _context.Applications
             .Include(a => a.Company)
-            .Include(a => a.Contact)
+            .Include(a => a.Connection)
             .ToListAsync();
 
         ResumeGroups = await _context.Resumes
@@ -55,7 +55,7 @@ public class IndexModel : PageModel
             .Select(x => x.Name)
             .ToListAsync();
 
-        Contacts = await _context.Connections
+        Connections = await _context.Connections
             .Select(x => x.Name)
             .ToListAsync();
     }
@@ -77,9 +77,9 @@ public class IndexModel : PageModel
         return companyObj;
     }
 
-    private async Task<Connection> ResolveContactAsync(string contact)
+    private async Task<Connection> ResolveConnectionAsync(string connection)
     {
-        var name = contact.Trim();
+        var name = connection.Trim();
 
         var lower = name.ToLower();
         var connectionObj = await _context.Connections
@@ -109,11 +109,11 @@ public class IndexModel : PageModel
 
         var company = await ResolveCompanyAsync(input.Company);
 
-        var contactId = (int?)null;
-        if (!string.IsNullOrWhiteSpace(input.Contact))
+        var connectionId = (int?)null;
+        if (!string.IsNullOrWhiteSpace(input.Connection))
         {
-            var contact = await ResolveContactAsync(input.Contact);
-            contactId = contact.Id;
+            var connection = await ResolveConnectionAsync(input.Connection);
+            connectionId = connection.Id;
         }
 
         var application = new JobApplication
@@ -123,7 +123,7 @@ public class IndexModel : PageModel
             Url = input.Url,
             Status = input.Status,
             Method = input.Method,
-            ContactId = contactId,
+            ConnectionId = connectionId,
             Notes = input.Notes ?? ""
         };
 
@@ -149,11 +149,11 @@ public class IndexModel : PageModel
 
         var company = await ResolveCompanyAsync(input.Company);
 
-        var contactId = (int?)null;
-        if (!string.IsNullOrWhiteSpace(input.Contact))
+        var connectionId = (int?)null;
+        if (!string.IsNullOrWhiteSpace(input.Connection))
         {
-            var contact = await ResolveContactAsync(input.Contact);
-            contactId = contact.Id;
+            var connection = await ResolveConnectionAsync(input.Connection);
+            connectionId = connection.Id;
         }
 
         application.CompanyId = company.Id;
@@ -163,7 +163,7 @@ public class IndexModel : PageModel
         application.Method = input.Method;
         application.DateApplied = input.DateApplied;
         application.FollowUpDate = input.FollowUpDate;
-        application.ContactId = contactId;
+        application.ConnectionId = connectionId;
         application.Notes = input.Notes ?? "";
         application.JobDescription = input.JobDescription ?? "";
 
