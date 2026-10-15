@@ -38,7 +38,7 @@ public class IndexModel : PageModel
     {
         Resumes = await _context.Resumes.ToListAsync();
         ResumeFolder = await _settings.GetSetting(AppSetting.ResumeFolder);
-        GeneratedResumeFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
+        GeneratedResumeFolder = await _settings.GetSetting(AppSetting.GeneratedResumeFolder);
     }
 
     public async Task OnGetAsync()
@@ -119,7 +119,7 @@ public class IndexModel : PageModel
         }
 
         await _context.SaveChangesAsync();
-        await _settings.SetSetting(AppSetting.GerenatedResumeFolder, newFolder);
+        await _settings.SetSetting(AppSetting.GeneratedResumeFolder, newFolder);
 
         return RedirectToPage();
     }

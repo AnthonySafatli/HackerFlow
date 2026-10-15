@@ -182,6 +182,9 @@ public class IndexModel : PageModel
             return RedirectToPage();
 
         application.Status += 1;
+        if (application.Status == ApplicationStatus.Applied)
+            application.DateApplied = DateTime.Now;
+
         await _context.SaveChangesAsync();
 
         return RedirectToPage();
@@ -208,7 +211,7 @@ public class IndexModel : PageModel
             return BadRequest();
 
         var ext = Path.GetExtension(resume.FilePath).ToLowerInvariant();
-        var resumeFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
+        var resumeFolder = await _settings.GetSetting(AppSetting.GeneratedResumeFolder);
         var resumeName = $"{application.Company}_{application.Role}_Resume_{Guid.NewGuid()}{ext}";
 
         var resumePath = await _file.SaveAsync(resumeFolder, resumeName, resumeData);
@@ -221,7 +224,7 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> GenerateCoverLetter(int id, string group)
+    public async Task<IActionResult> OnPostGenerateCoverLetter(int id, string group)
     {
         var application = await _context.Applications.FindAsync(id);
         if (application == null)
@@ -242,7 +245,7 @@ public class IndexModel : PageModel
             return BadRequest();
 
         var ext = Path.GetExtension(coverLetter.FilePath).ToLowerInvariant();
-        var coverLetterFolder = await _settings.GetSetting(AppSetting.GerenatedResumeFolder);
+        var coverLetterFolder = await _settings.GetSetting(AppSetting.GeneratedCoverLetterFolder);
         var coverLetterName = $"{application.Company}_{application.Role}_CoverLetter_{Guid.NewGuid()}{ext}";
 
         var coverLetterPath = await _file.SaveAsync(coverLetterFolder, coverLetterName, coverLetterData);

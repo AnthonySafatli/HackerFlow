@@ -1,11 +1,11 @@
 @model List<string>
 
 <div class="application-pipeline mb-4">
-    <a href="#" class="pipeline-step active" data-status="all">
+    <a href="#" class="pipeline-step" data-status="all">
         <span>All (@(Model.Count))</span>
     </a>
 
-    <a href="#" class="pipeline-step" data-status="bookmarked">
+    <a href="#" class="pipeline-step active" data-status="bookmarked">
         <span>Bookmarked (@Model.Count(x => x == "Bookmarked"))</span>
     </a>
 
