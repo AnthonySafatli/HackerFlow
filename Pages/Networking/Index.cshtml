@@ -245,6 +245,41 @@
     }
 }
 
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabButtons = document.querySelectorAll(
+                '#networkingTabs button[data-bs-toggle="tab"]'
+            );
+
+            // Restore the selected tab from the URL on page load.
+            const hash = window.location.hash;
+
+            if (hash) {
+                const targetButton = document.querySelector(
+                    `#networkingTabs button[data-bs-target="${hash}"]`
+                );
+
+                if (targetButton) {
+                    bootstrap.Tab.getOrCreateInstance(targetButton).show();
+                }
+            }
+
+            // Update the URL whenever a tab is selected.
+            tabButtons.forEach(button => {
+                button.addEventListener("shown.bs.tab", function (event) {
+                    const target = event.target.getAttribute("data-bs-target");
+
+                    if (target) {
+                        history.replaceState(null, "", target);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
 @section Styles {
     <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tabs.css" asp-append-version="true" />
 }
