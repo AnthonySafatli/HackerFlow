@@ -1,0 +1,91 @@
+@model HackerFlow.Models.Company
+@using HackerFlow.Models
+
+@{
+    string ReferralBadge(ReferralChance r) => r switch
+    {
+        ReferralChance.High => "text-bg-success",
+        ReferralChance.Medium => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+}
+
+<div class="modal fade" id="detailsCompanyModal-@Model.Id" tabindex="-1"
+     aria-labelledby="detailsCompanyModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content hf-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsCompanyModalLabel-@Model.Id">@Model.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Referral Chance</div>
+                        <div class="hf-detail-value">
+                            <span class="badge @ReferralBadge(Model.ReferralChance)">@Model.ReferralChance</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Website</div>
+                        <div class="hf-detail-value">
+                            @if (!string.IsNullOrWhiteSpace(Model.Website))
+                            {
+                                <a href="@Model.Website" target="_blank"
+                                   rel="noopener noreferrer">@Model.Website</a>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Description</div>
+                    <div class="hf-detail-value">
+                        @(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)
+                    </div>
+                </div>
+
+                <hr class="border-secondary" />
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Connections (@Model.Connections.Count)</div>
+                    <div class="hf-detail-value">
+                        @if (Model.Connections.Any())
+                        {
+                            @foreach (var connection in Model.Connections.OrderBy(c => c.Name))
+                            {
+                                <button type="button" class="badge text-bg-secondary border-0 me-1"
+                                        data-bs-dismiss="modal" data-bs-toggle="modal"
+                                        data-bs-target="#detailsConnectionModal-@connection.Id">
+                                    @connection.Name
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <span>No connections yet</span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#editCompanyModal-@Model.Id">
+                    Edit
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -39,7 +39,7 @@
                         <th scope="col">Status</th>
                         <th scope="col">Date Applied</th>
                         <th scope="col">Method</th>
-                        <th scope="col">Contact</th>
+                        <th scope="col">Connection</th>
                         <th scope="col">Notes</th>
                         <th scope="col" class="text-end">
                             <span class="visually-hidden">Actions</span>
@@ -57,7 +57,7 @@
                             data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">
-                                    @application.Company
+                                    @application.Company.Name
                                 </div>
 
                                 <a href="@application.Url" target="_blank" rel="noopener noreferrer"
@@ -98,10 +98,10 @@
                             </td>
 
                             <td>
-                                @if (!string.IsNullOrWhiteSpace(application.Contact))
+                                @if (!string.IsNullOrWhiteSpace(application.Connection?.Name))
                                 {
                                     <span class="text-secondary">
-                                        @application.Contact
+                                        @application.Connection.Name
                                     </span>
                                 }
                                 else

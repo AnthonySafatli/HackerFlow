@@ -1,0 +1,220 @@
+@model HackerFlow.Models.Connection
+@using HackerFlow.Models
+@using System.Text.RegularExpressions
+
+@{
+    // Supplied by Index.cshtml via ViewData
+    var allConnections = ViewData["AllConnections"] as IEnumerable<Connection> ?? Enumerable.Empty<Connection>();
+    var allCompanies = ViewData["AllCompanies"] as IEnumerable<Company> ?? Enumerable.Empty<Company>();
+
+    string Humanize(string value) => Regex.Replace(value, "(?<=[a-z])(?=[A-Z])", " ");
+
+    string LevelText(ConnectionLevel level) => level switch
+    {
+        ConnectionLevel.Direct => "Direct",
+        ConnectionLevel.First => "1st",
+        ConnectionLevel.Second => "2nd",
+        ConnectionLevel.Third => "3rd",
+        _ => level.ToString()
+    };
+}
+
+<div class="modal fade" id="editConnectionModal-@Model.Id" tabindex="-1"
+     aria-labelledby="editConnectionModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content hf-modal">
+
+            <form asp-page-handler="UpdateConnection" method="post">
+                <input type="hidden" name="UpdateConnectionInput.Id" value="@Model.Id" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editConnectionModalLabel-@Model.Id">
+                        Edit Connection — @Model.Name
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="editConn-name-@Model.Id" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editConn-name-@Model.Id"
+                               name="UpdateConnectionInput.Name" value="@Model.Name" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editConn-companyInput-@Model.Id" class="form-label">Company(s)</label>
+                        <div id="editConn-companyChips-@Model.Id" class="d-flex flex-wrap gap-1 mb-2">
+                            @foreach (var company in Model.Companies)
+                            {
+                                <span class="badge text-bg-secondary d-inline-flex align-items-center gap-1"
+                                      data-chip="@company.Name">
+                                    @company.Name
+                                    <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem;"
+                                            aria-label="Remove @company.Name"></button>
+                                    <input type="hidden" name="UpdateConnectionInput.CompanyNames"
+                                           value="@company.Name" />
+                                </span>
+                            }
+                        </div>
+                        <input type="text" class="form-control" id="editConn-companyInput-@Model.Id"
+                               list="editConn-companyOptions-@Model.Id"
+                               placeholder="Type or pick a company, then press Enter" autocomplete="off" />
+                        <datalist id="editConn-companyOptions-@Model.Id">
+                            @foreach (var company in allCompanies)
+                            {
+                                <option value="@company.Name"></option>
+                            }
+                        </datalist>
+                        <div class="form-text">New companies are created automatically.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editConn-closeness-@Model.Id" class="form-label">Closeness</label>
+                            <select class="form-select" id="editConn-closeness-@Model.Id"
+                                    name="UpdateConnectionInput.Closeness">
+                                @foreach (var option in Enum.GetValues<Closeness>())
+                                {
+                                    <option value="@option" selected="@(Model.Closeness == option)">
+                                        @Humanize(option.ToString())
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editConn-level-@Model.Id" class="form-label">Connection Level</label>
+                            <select class="form-select" id="editConn-level-@Model.Id"
+                                    name="UpdateConnectionInput.Level">
+                                @foreach (var option in Enum.GetValues<ConnectionLevel>())
+                                {
+                                    <option value="@option" selected="@(Model.Level == option)">
+                                        @LevelText(option)
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editConn-introducedBy-@Model.Id" class="form-label">Introduced By</label>
+                        <select class="form-select" id="editConn-introducedBy-@Model.Id"
+                                name="UpdateConnectionInput.IntroducedById">
+                            <option value="" selected="@(Model.IntroducedById == null)">None</option>
+                            @foreach (var connection in allConnections.Where(c => c.Id != Model.Id))
+                            {
+                                <option value="@connection.Id" selected="@(Model.IntroducedById == connection.Id)">
+                                    @connection.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editConn-connectedAt-@Model.Id" class="form-label">Connected On</label>
+                            <input type="date" class="form-control" id="editConn-connectedAt-@Model.Id"
+                                   name="UpdateConnectionInput.ConnectedAt"
+                                   value="@(Model.ConnectedAt?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editConn-lastContact-@Model.Id" class="form-label">Last Contact</label>
+                            <input type="date" class="form-control" id="editConn-lastContact-@Model.Id"
+                                   name="UpdateConnectionInput.LastContactAt"
+                                   value="@(Model.LastContactAt?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="editConn-canIntroduce-@Model.Id"
+                               name="UpdateConnectionInput.CanIntroduceMe" value="true"
+                               checked="@Model.CanIntroduceMe" />
+                        <label class="form-check-label" for="editConn-canIntroduce-@Model.Id">Can introduce me</label>
+                        <input type="hidden" name="UpdateConnectionInput.CanIntroduceMe" value="false" />
+                    </div>
+
+                    <hr class="border-secondary" />
+
+                    <div class="mb-1">
+                        <label class="form-label text-secondary">Introduced</label>
+                        <input type="text" class="form-control" disabled
+                               value="@(Model.IntroducedTo.Any() ? string.Join(", ", Model.IntroducedTo.Select(i => i.Name)) : "No one yet")" />
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-hf-primary">Save Changes</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const input = document.getElementById('editConn-companyInput-@Model.Id');
+        const chips = document.getElementById('editConn-companyChips-@Model.Id');
+        const form = input.closest('form');
+        const added = new Set();
+
+        function bindRemove(chip, key) {
+            chip.querySelector('button').addEventListener('click', function () {
+                added.delete(key);
+                chip.remove();
+            });
+        }
+
+        // Wire up chips rendered by the server
+        chips.querySelectorAll('[data-chip]').forEach(function (chip) {
+            const key = chip.dataset.chip.toLowerCase();
+            added.add(key);
+            bindRemove(chip, key);
+        });
+
+        function addCompany(raw) {
+            const name = raw.trim();
+            const key = name.toLowerCase();
+            if (!name || added.has(key)) return;
+            added.add(key);
+
+            const chip = document.createElement('span');
+            chip.className = 'badge text-bg-secondary d-inline-flex align-items-center gap-1';
+            chip.dataset.chip = name;
+            chip.append(name);
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn-close btn-close-white';
+            remove.style.fontSize = '0.6rem';
+            remove.setAttribute('aria-label', 'Remove ' + name);
+
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'UpdateConnectionInput.CompanyNames';
+            hidden.value = name;
+
+            chip.append(remove, hidden);
+            chips.appendChild(chip);
+            bindRemove(chip, key);
+        }
+
+        function commit() {
+            addCompany(input.value);
+            input.value = '';
+        }
+
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                commit();
+            }
+        });
+        input.addEventListener('change', commit);
+        form.addEventListener('submit', commit);
+    })();
+</script>

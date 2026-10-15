@@ -27,13 +27,71 @@ public class IndexModel : PageModel
     public List<string> ResumeGroups { get; private set; } = [];
     public List<string> CoverLetterGroups { get; private set; } = [];
     public List<string> Prompts { get; private set; } = [];
+    public List<string> Companies { get; private set; } = [];
+    public List<string> Connections { get; private set; } = [];
 
     private async Task LoadProperties()
     {
-        Applications = await _context.Applications.ToListAsync();
-        ResumeGroups = await _context.Resumes.GroupBy(x => x.Name).Select(x => x.First().Name).ToListAsync();
-        CoverLetterGroups = await _context.CoverLetters.GroupBy(x => x.Name).Select(x => x.First().Name).ToListAsync();
-        Prompts = await _context.Prompts.Select(x => x.Name).ToListAsync();
+        Applications = await _context.Applications
+            .Include(a => a.Company)
+            .Include(a => a.Connection)
+            .ToListAsync();
+
+        ResumeGroups = await _context.Resumes
+            .GroupBy(x => x.Name)
+            .Select(x => x.First().Name)
+            .ToListAsync();
+
+        CoverLetterGroups = await _context.CoverLetters
+            .GroupBy(x => x.Name)
+            .Select(x => x.First().Name)
+            .ToListAsync();
+
+        Prompts = await _context.Prompts
+            .Select(x => x.Name)
+            .ToListAsync();
+
+        Companies = await _context.Companies
+            .Select(x => x.Name)
+            .ToListAsync();
+
+        Connections = await _context.Connections
+            .Select(x => x.Name)
+            .ToListAsync();
+    }
+
+    private async Task<Company> ResolveCompanyAsync(string company)
+    {
+        var name = company.Trim();
+
+        var lower = name.ToLower();
+        var companyObj = await _context.Companies
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == lower);
+
+        if (companyObj == null)
+        {
+            companyObj = new Models.Company { Name = name };
+            _context.Companies.Add(companyObj);
+        }
+
+        return companyObj;
+    }
+
+    private async Task<Connection> ResolveConnectionAsync(string connection)
+    {
+        var name = connection.Trim();
+
+        var lower = name.ToLower();
+        var connectionObj = await _context.Connections
+            .FirstOrDefaultAsync(c => c.Name.ToLower() == lower);
+
+        if (connectionObj == null)
+        {
+            connectionObj = new Connection { Name = name };
+            _context.Connections.Add(connectionObj);
+        }
+
+        return connectionObj;
     }
 
     public async Task OnGetAsync()
@@ -49,14 +107,23 @@ public class IndexModel : PageModel
             return Page();
         }
 
+        var company = await ResolveCompanyAsync(input.Company);
+
+        var connectionId = (int?)null;
+        if (!string.IsNullOrWhiteSpace(input.Connection))
+        {
+            var connection = await ResolveConnectionAsync(input.Connection);
+            connectionId = connection.Id;
+        }
+
         var application = new JobApplication
         {
-            Company = input.Company,
+            CompanyId = company.Id,
             Role = input.Role,
             Url = input.Url,
             Status = input.Status,
             Method = input.Method,
-            Contact = input.Contact ?? "",
+            ConnectionId = connectionId,
             Notes = input.Notes ?? ""
         };
 
@@ -80,14 +147,23 @@ public class IndexModel : PageModel
             return NotFound();
         }
 
-        application.Company = input.Company;
+        var company = await ResolveCompanyAsync(input.Company);
+
+        var connectionId = (int?)null;
+        if (!string.IsNullOrWhiteSpace(input.Connection))
+        {
+            var connection = await ResolveConnectionAsync(input.Connection);
+            connectionId = connection.Id;
+        }
+
+        application.CompanyId = company.Id;
         application.Role = input.Role;
         application.Url = input.Url;
         application.Status = input.Status;
         application.Method = input.Method;
         application.DateApplied = input.DateApplied;
         application.FollowUpDate = input.FollowUpDate;
-        application.Contact = input.Contact ?? "";
+        application.ConnectionId = connectionId;
         application.Notes = input.Notes ?? "";
         application.JobDescription = input.JobDescription ?? "";
 

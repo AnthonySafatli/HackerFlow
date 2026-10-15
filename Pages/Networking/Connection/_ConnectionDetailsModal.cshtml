@@ -1,0 +1,149 @@
+@model HackerFlow.Models.Connection
+@using HackerFlow.Models
+@using System.Text.RegularExpressions
+
+@{
+    string Humanize(string value) => Regex.Replace(value, "(?<=[a-z])(?=[A-Z])", " ");
+
+    string LevelText(ConnectionLevel level) => level switch
+    {
+        ConnectionLevel.Direct => "Direct",
+        ConnectionLevel.First => "1st",
+        ConnectionLevel.Second => "2nd",
+        ConnectionLevel.Third => "3rd",
+        _ => level.ToString()
+    };
+
+    string CloseBadge(Closeness c) => c switch
+    {
+        Closeness.VeryClose => "text-bg-success",
+        Closeness.Close => "text-bg-info",
+        Closeness.Familiar => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+}
+
+<div class="modal fade" id="detailsConnectionModal-@Model.Id" tabindex="-1"
+     aria-labelledby="detailsConnectionModalLabel-@Model.Id" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content hf-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsConnectionModalLabel-@Model.Id">@Model.Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Closeness</div>
+                        <div class="hf-detail-value">
+                            <span class="badge @CloseBadge(Model.Closeness)">@Humanize(Model.Closeness.ToString())</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Connection Level</div>
+                        <div class="hf-detail-value">@LevelText(Model.Level)</div>
+                    </div>
+                </div>
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Company(s)</div>
+                    <div class="hf-detail-value">
+                        @if (Model.Companies.Any())
+                        {
+                            @foreach (var company in Model.Companies)
+                            {
+                                <button type="button" class="badge text-bg-secondary border-0 me-1"
+                                        data-bs-dismiss="modal" data-bs-toggle="modal"
+                                        data-bs-target="#detailsCompanyModal-@company.Id">
+                                    @company.Name
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Can Introduce Me</div>
+                        <div class="hf-detail-value">
+                            <span class="badge @(Model.CanIntroduceMe ? "text-bg-success" : "text-bg-secondary")">
+                                @(Model.CanIntroduceMe ? "Yes" : "No")
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Introduced By</div>
+                        <div class="hf-detail-value">
+                            @if (Model.IntroducedBy != null)
+                            {
+                                <button type="button" class="btn btn-link p-0 text-start hf-file-link"
+                                        data-bs-dismiss="modal" data-bs-toggle="modal"
+                                        data-bs-target="#detailsConnectionModal-@Model.IntroducedBy.Id">
+                                    @Model.IntroducedBy.Name
+                                </button>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hf-detail-row">
+                    <div class="hf-detail-label">Introduced (@Model.IntroducedTo.Count)</div>
+                    <div class="hf-detail-value">
+                        @if (Model.IntroducedTo.Any())
+                        {
+                            @foreach (var person in Model.IntroducedTo.OrderBy(p => p.Name))
+                            {
+                                <button type="button" class="badge text-bg-secondary border-0 me-1"
+                                        data-bs-dismiss="modal" data-bs-toggle="modal"
+                                        data-bs-target="#detailsConnectionModal-@person.Id">
+                                    @person.Name
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <span>No one yet</span>
+                        }
+                    </div>
+                </div>
+
+                <hr class="border-secondary" />
+
+                <div class="row">
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Connected On</div>
+                        <div class="hf-detail-value">@(Model.ConnectedAt?.ToString("MMM d, yyyy") ?? "—")</div>
+                    </div>
+
+                    <div class="col-md-6 hf-detail-row">
+                        <div class="hf-detail-label">Last Contact</div>
+                        <div class="hf-detail-value">@(Model.LastContactAt?.ToString("MMM d, yyyy") ?? "Never")</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-hf-primary" data-bs-dismiss="modal" data-bs-toggle="modal"
+                        data-bs-target="#editConnectionModal-@Model.Id">
+                    Edit
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -17,6 +17,21 @@ namespace HackerFlow.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
 
+            modelBuilder.Entity("ConnectionCompanies", b =>
+                {
+                    b.Property<int>("CompaniesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ConnectionsId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CompaniesId", "ConnectionsId");
+
+                    b.HasIndex("ConnectionsId");
+
+                    b.ToTable("ConnectionCompanies");
+                });
+
             modelBuilder.Entity("HackerFlow.Models.AppSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -34,6 +49,67 @@ namespace HackerFlow.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AppSettings");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReferralChance")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.Connection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("CanIntroduceMe")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Closeness")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ConnectedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("IntroducedById")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastContactAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IntroducedById");
+
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("HackerFlow.Models.CoverLetter", b =>
@@ -71,13 +147,11 @@ namespace HackerFlow.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Company")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("Contact")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ConnectionId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("CoverLetterPath")
                         .IsRequired()
@@ -117,6 +191,10 @@ namespace HackerFlow.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("ConnectionId");
 
                     b.ToTable("Applications");
                 });
@@ -174,6 +252,53 @@ namespace HackerFlow.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Resumes");
+                });
+
+            modelBuilder.Entity("ConnectionCompanies", b =>
+                {
+                    b.HasOne("HackerFlow.Models.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HackerFlow.Models.Connection", null)
+                        .WithMany()
+                        .HasForeignKey("ConnectionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.Connection", b =>
+                {
+                    b.HasOne("HackerFlow.Models.Connection", "IntroducedBy")
+                        .WithMany("IntroducedTo")
+                        .HasForeignKey("IntroducedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("IntroducedBy");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.JobApplication", b =>
+                {
+                    b.HasOne("HackerFlow.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HackerFlow.Models.Connection", "Connection")
+                        .WithMany()
+                        .HasForeignKey("ConnectionId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Connection");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.Connection", b =>
+                {
+                    b.Navigation("IntroducedTo");
                 });
 #pragma warning restore 612, 618
         }

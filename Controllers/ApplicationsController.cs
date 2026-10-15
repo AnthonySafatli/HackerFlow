@@ -57,7 +57,9 @@ public class ApplicationsController : ControllerBase
     [Route("{id}/create-application-package")]
     public async Task<IActionResult> CreateApplicationPackage(int id)
     {
-        var application = await _context.Applications.FindAsync(id);
+        var application = await _context.Applications
+            .Include(a => a.Company)
+            .FirstOrDefaultAsync(x => x.Id == id);
         if (application == null)
             return NotFound();
 
@@ -75,7 +77,7 @@ public class ApplicationsController : ControllerBase
         if (resumeData == null && coverLetterData == null)
             return BadRequest();
 
-        var companyName = Regex.Replace(application.Company, "[^a-zA-Z0-9_-]", "");
+        var companyName = Regex.Replace(application.Company.Name, "[^a-zA-Z0-9_-]", "");
         var roleName = Regex.Replace(application.Role, "[^a-zA-Z0-9_-]", "");
 
         var packageFolder = $"~/Downloads/{companyName}_{roleName}_Package";
