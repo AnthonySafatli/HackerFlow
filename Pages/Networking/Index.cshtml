@@ -101,7 +101,7 @@
                             <tbody>
                                 @foreach (var c in Model.Connections)
                                 {
-                                    <tr>
+                                    <tr class="pointer" data-bs-toggle="modal" data-bs-target="#detailsConnectionModal-@c.Id">
                                         <td class="fw-medium">@c.Name</td>
                                         <td>
                                             @if (c.Companies.Any())
@@ -151,7 +151,8 @@
                                             </button>
 
                                             <form method="post" asp-page-handler="DeleteConnection" asp-route-id="@c.Id"
-                                                  class="d-inline" onsubmit="return confirm('Delete @c.Name?');">
+                                                  class="d-inline" onclick="event.stopPropagation()"
+                                                  onsubmit="return confirm('Delete @c.Name?');">
                                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                             </form>
                                         </td>
@@ -188,12 +189,14 @@
                             <tbody>
                                 @foreach (var company in Model.Companies)
                                 {
-                                    <tr>
+                                    <tr class="pointer" data-bs-toggle="modal"
+                                        data-bs-target="#detailsCompanyModal-@company.Id">
                                         <td>
                                             <div class="fw-medium">
                                                 @if (!string.IsNullOrWhiteSpace(company.Website))
                                                 {
                                                     <a href="@company.Website" target="_blank" rel="noopener"
+                                                       onclick="event.stopPropagation()"
                                                        class="text-reset text-decoration-none">@company.Name</a>
                                                 }
                                                 else
@@ -215,7 +218,8 @@
                                             </button>
 
                                             <form method="post" asp-page-handler="DeleteCompany" asp-route-id="@company.Id"
-                                                  class="d-inline" onsubmit="return confirm('Delete @company.Name?');">
+                                                  class="d-inline" onclick="event.stopPropagation()"
+                                                  onsubmit="return confirm('Delete @company.Name?');">
                                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                             </form>
                                         </td>
@@ -233,15 +237,17 @@
 @section Modals {
     <partial name="Connection/_NewConnectionModal" />
     <partial name="Company/_NewCompanyModal" />
-    
+
     @foreach (var c in Model.Connections)
     {
         <partial name="Connection/_EditConnectionModal" model="c" />
+        <partial name="Connection/_ConnectionDetailsModal" model="c" />
     }
 
     @foreach (var company in Model.Companies)
     {
         <partial name="Company/_EditCompanyModal" model="company" />
+        <partial name="Company/_CompanyDetailsModal" model="company" />
     }
 }
 
