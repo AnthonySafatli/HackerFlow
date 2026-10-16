@@ -143,16 +143,23 @@
 
     @foreach (var application in Model.Applications)
     {
-        var vm = new ApplicaitonDetailsModalVM
+        var detailsVm = new ApplicaitonDetailsModalVM
         {
             JobApplicaiton = application,
             ResumeGroups = Model.ResumeGroups,
             CoverLetterGroups = Model.CoverLetterGroups,
-            Prompts = Model.Prompts
+            Prompts = Model.Prompts,
         };
 
-        <partial name="_EditApplicationModal" model="application" />
-        <partial name="_ApplicationDetailsModal" model="vm" />
+        var editVm = new ApplicaitonEditModalVM
+        {
+            JobApplicaiton = application,
+            Companies = Model.Companies,
+            Connections = Model.Connections,
+        };
+
+        <partial name="_EditApplicationModal" model="editVm" />
+        <partial name="_ApplicationDetailsModal" model="detailsVm" />
     }
 }
 

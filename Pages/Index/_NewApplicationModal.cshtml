@@ -66,7 +66,8 @@
 
                     <div class="mb-3">
                         <label for="newApp-connection" class="form-label">Connection</label>
-                        <input type="text" class="form-control" id="newApp-connection" name="CreateInput.Connection" />
+                        <input type="text" class="form-control" id="newApp-connection" name="CreateInput.Connection"
+                               list="existingConnections" />
                         <datalist id="existingConnections">
                             @foreach (var connection in Model.Connections)
                             {
