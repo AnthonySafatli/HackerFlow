@@ -209,10 +209,15 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostDeleteCompanyAsync(int id)
     {
         var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
-
         if (company == null)
-        {
             return NotFound();
+
+        if (await _context.Applications.AnyAsync(a => a.CompanyId == id) ||
+            await _context.Connections.AnyAsync(c => c.Companies.Any(x => x.Id == id)))
+        {
+            ModelState.AddModelError("", "Company is still in use.");
+            await LoadProperties();
+            return Page();
         }
 
         _context.Companies.Remove(company);

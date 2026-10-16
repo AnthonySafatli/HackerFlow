@@ -32,6 +32,25 @@ public class HackerFlowContext : DbContext
                 j => j.HasOne<Connection>().WithMany()
                     .HasForeignKey("ConnectionsId")
                     .OnDelete(DeleteBehavior.Cascade));
+
+        // Block deleting a company that still has applications (default is cascade)
+        modelBuilder.Entity<JobApplication>()
+            .HasOne(a => a.Company)
+            .WithMany()
+            .HasForeignKey(a => a.CompanyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Deleting a connection keeps the application and clears its ConnectionId
+        modelBuilder.Entity<JobApplication>()
+            .HasOne(a => a.Connection)
+            .WithMany()
+            .HasForeignKey(a => a.ConnectionId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Unique company names, since the resolve methods match by name
+        modelBuilder.Entity<Company>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
     }
 
     public DbSet<JobApplication> Applications => Set<JobApplication>();

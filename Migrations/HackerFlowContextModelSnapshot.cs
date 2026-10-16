@@ -74,6 +74,9 @@ namespace HackerFlow.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Companies");
                 });
 
@@ -284,12 +287,13 @@ namespace HackerFlow.Migrations
                     b.HasOne("HackerFlow.Models.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HackerFlow.Models.Connection", "Connection")
                         .WithMany()
-                        .HasForeignKey("ConnectionId");
+                        .HasForeignKey("ConnectionId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Company");
 
