@@ -29,6 +29,7 @@ public class Connection
 
 public enum Closeness
 {
+    None = 0,
     Weak = 1,
     Familiar = 2,
     Close = 3,

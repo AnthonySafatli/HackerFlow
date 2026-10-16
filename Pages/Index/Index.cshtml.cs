@@ -70,7 +70,7 @@ public class IndexModel : PageModel
 
         if (companyObj == null)
         {
-            companyObj = new Models.Company { Name = name };
+            companyObj = new Company { Name = name };
             _context.Companies.Add(companyObj);
         }
 
@@ -99,7 +99,7 @@ public class IndexModel : PageModel
         await LoadProperties();
     }
 
-    public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreatePromptInput input)
+    public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreateApplicationInput input)
     {
         if (!ModelState.IsValid)
         {
@@ -109,26 +109,25 @@ public class IndexModel : PageModel
 
         var company = await ResolveCompanyAsync(input.Company);
 
-        var connectionId = (int?)null;
+        var connection = null as Connection;
         if (!string.IsNullOrWhiteSpace(input.Connection))
         {
-            var connection = await ResolveConnectionAsync(input.Connection);
-            connectionId = connection.Id;
+            connection = await ResolveConnectionAsync(input.Connection);
         }
 
         var application = new JobApplication
         {
-            CompanyId = company.Id,
+            Company = company,
             Role = input.Role,
             Url = input.Url,
             Status = input.Status,
             Method = input.Method,
-            ConnectionId = connectionId,
+            Connection = connection,
             Notes = input.Notes ?? ""
         };
 
         _context.Applications.Add(application);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return RedirectToPage();
     }
@@ -141,7 +140,7 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var application = _context.Applications.Find(input.Id);
+        var application = await _context.Applications.FindAsync(input.Id);
         if (application == null)
         {
             return NotFound();
@@ -149,25 +148,24 @@ public class IndexModel : PageModel
 
         var company = await ResolveCompanyAsync(input.Company);
 
-        var connectionId = (int?)null;
+        var connection = null as Connection;
         if (!string.IsNullOrWhiteSpace(input.Connection))
         {
-            var connection = await ResolveConnectionAsync(input.Connection);
-            connectionId = connection.Id;
+            connection = await ResolveConnectionAsync(input.Connection);
         }
 
-        application.CompanyId = company.Id;
+        application.Company = company;
         application.Role = input.Role;
         application.Url = input.Url;
         application.Status = input.Status;
         application.Method = input.Method;
         application.DateApplied = input.DateApplied;
         application.FollowUpDate = input.FollowUpDate;
-        application.ConnectionId = connectionId;
+        application.Connection = connection;
         application.Notes = input.Notes ?? "";
         application.JobDescription = input.JobDescription ?? "";
 
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return RedirectToPage();
     }
@@ -178,7 +176,7 @@ public class IndexModel : PageModel
         if (application == null)
             return NotFound();
 
-        if ((int)application.Status >= 5)
+        if (application.Status >= ApplicationStatus.Accepted)
             return RedirectToPage();
 
         application.Status += 1;
@@ -192,7 +190,9 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostGenerateResumeAsync(int id, string group)
     {
-        var application = await _context.Applications.FindAsync(id);
+        var application = await _context.Applications
+            .Include(x => x.Company)
+            .FirstOrDefaultAsync(x => x.Id == id);
         if (application == null)
             return NotFound();
 
@@ -212,7 +212,7 @@ public class IndexModel : PageModel
 
         var ext = Path.GetExtension(resume.FilePath).ToLowerInvariant();
         var resumeFolder = await _settings.GetSetting(AppSetting.GeneratedResumeFolder);
-        var resumeName = $"{application.Company}_{application.Role}_Resume_{Guid.NewGuid()}{ext}";
+        var resumeName = $"{application.Company.Name}_{application.Role}_Resume_{Guid.NewGuid()}{ext}";
 
         var resumePath = await _file.SaveAsync(resumeFolder, resumeName, resumeData);
         if (resumePath == null) 
@@ -226,7 +226,9 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostGenerateCoverLetter(int id, string group)
     {
-        var application = await _context.Applications.FindAsync(id);
+        var application = await _context.Applications
+            .Include(x => x.Company)
+            .FirstOrDefaultAsync(x => x.Id == id);
         if (application == null)
             return NotFound();
 
@@ -246,7 +248,7 @@ public class IndexModel : PageModel
 
         var ext = Path.GetExtension(coverLetter.FilePath).ToLowerInvariant();
         var coverLetterFolder = await _settings.GetSetting(AppSetting.GeneratedCoverLetterFolder);
-        var coverLetterName = $"{application.Company}_{application.Role}_CoverLetter_{Guid.NewGuid()}{ext}";
+        var coverLetterName = $"{application.Company.Name}_{application.Role}_CoverLetter_{Guid.NewGuid()}{ext}";
 
         var coverLetterPath = await _file.SaveAsync(coverLetterFolder, coverLetterName, coverLetterData);
         if (coverLetterPath == null) 
@@ -277,13 +279,12 @@ public class IndexModel : PageModel
             return NotFound();
 
         _context.Applications.Remove(application);
+        await _context.SaveChangesAsync();
 
         if (!string.IsNullOrWhiteSpace(application.CoverLetterPath))
             _file.Delete(application.CoverLetterPath);
         if (!string.IsNullOrWhiteSpace(application.ResumePath))
             _file.Delete(application.ResumePath);
-
-        await _context.SaveChangesAsync();
 
         return RedirectToPage();
     }
