@@ -63,6 +63,12 @@ public class IndexModel : PageModel
         return companies;
     }
 
+    private Task<bool> CompanyNameTakenAsync(string name, int excludeId = 0)
+    {
+        var lower = name.Trim().ToLower();
+        return _context.Companies.AnyAsync(c => c.Id != excludeId && c.Name.ToLower() == lower);
+    }
+
     public async Task OnGetAsync()
     {
         await LoadProperties();
@@ -70,14 +76,10 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostCreateConnectionAsync([FromForm(Name = "CreateConnectionInput")] CreateConnectionInput input)
     {
+        if (!await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
+            ModelState.AddModelError(nameof(input.IntroducedById), "That introducer doesn't exist.");
+        
         if (!ModelState.IsValid)
-        {
-            await LoadProperties();
-            return Page();
-        }
-
-        if (input.IntroducedById.HasValue &&
-            !await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
         {
             await LoadProperties();
             return Page();
@@ -103,25 +105,18 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateConnectionAsync([FromForm(Name = "UpdateConnectionInput")] UpdateConnectionInput input)
     {
-        if (!ModelState.IsValid)
-        {
-            await LoadProperties();
-            return Page();
-        }
-
+        if (input.IntroducedById == input.Id)
+            ModelState.AddModelError(nameof(input.IntroducedById), "A connection can't introduce itself.");
+        else if (!await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
+            ModelState.AddModelError(nameof(input.IntroducedById), "That introducer doesn't exist.");
+        
         var connection = await _context.Connections
             .Include(c => c.Companies)
             .FirstOrDefaultAsync(c => c.Id == input.Id);
-
         if (connection == null)
-        {
-            return NotFound();
-        }
+            ModelState.AddModelError(nameof(input.Id), "This connection doesnt exist.");
 
-        // Can't be introduced by yourself, and the introducer has to exist
-        if (input.IntroducedById.HasValue &&
-            (input.IntroducedById == input.Id ||
-             !await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById)))
+        if (!ModelState.IsValid || connection == null)
         {
             await LoadProperties();
             return Page();
@@ -148,10 +143,13 @@ public class IndexModel : PageModel
         var connection = await _context.Connections
             .Include(c => c.IntroducedTo)
             .FirstOrDefaultAsync(c => c.Id == id);
-
         if (connection == null)
+            ModelState.AddModelError("", "This connection doesnt exist.");
+
+        if (!ModelState.IsValid || connection == null)
         {
-            return NotFound();
+            await LoadProperties();
+            return Page();
         }
 
         _context.Connections.Remove(connection);
@@ -162,6 +160,9 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostCreateCompanyAsync([FromForm(Name = "CreateCompanyInput")] CreateCompanyInput input)
     {
+        if (await CompanyNameTakenAsync(input.Name))
+            ModelState.AddModelError(nameof(input.Name), "A company with that name already exists.");
+
         if (!ModelState.IsValid)
         {
             await LoadProperties();
@@ -171,52 +172,54 @@ public class IndexModel : PageModel
         var company = new Models.Company
         {
             Name = input.Name,
-            Website = input.Website,
+            Website = input.Website ?? "",
             ReferralChance = input.ReferralChance,
-            Description = input.Description
+            Description = input.Description ?? ""
         };
 
         _context.Companies.Add(company);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(null, null, "companies-pane");
     }
 
     public async Task<IActionResult> OnPostUpdateCompanyAsync([FromForm(Name = "UpdateCompanyInput")] UpdateCompanyInput input)
     {
-        if (!ModelState.IsValid)
+        var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == input.Id);
+        if (company == null)
+            ModelState.AddModelError("", "This company doesnt exist.");
+
+        if (await CompanyNameTakenAsync(input.Name, input.Id))
+            ModelState.AddModelError(nameof(input.Name), "A company with that name already exists.");
+
+        if (!ModelState.IsValid || company == null)
         {
             await LoadProperties();
             return Page();
         }
 
-        var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == input.Id);
-
-        if (company == null)
-        {
-            return NotFound();
-        }
-
         company.Name = input.Name;
-        company.Website = input.Website;
+        company.Website = input.Website ?? "";
         company.ReferralChance = input.ReferralChance;
-        company.Description = input.Description;
+        company.Description = input.Description ?? "";
 
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(null, null, "companies-pane");
     }
 
     public async Task<IActionResult> OnPostDeleteCompanyAsync(int id)
     {
         var company = await _context.Companies.FirstOrDefaultAsync(c => c.Id == id);
         if (company == null)
-            return NotFound();
+            ModelState.AddModelError("", "This company doesnt exist.");
 
         if (await _context.Applications.AnyAsync(a => a.CompanyId == id) ||
             await _context.Connections.AnyAsync(c => c.Companies.Any(x => x.Id == id)))
-        {
             ModelState.AddModelError("", "Company is still in use.");
+
+        if (!ModelState.IsValid || company == null)
+        {
             await LoadProperties();
             return Page();
         }
@@ -224,6 +227,6 @@ public class IndexModel : PageModel
         _context.Companies.Remove(company);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(null, null, "companies-pane");
     }
 }

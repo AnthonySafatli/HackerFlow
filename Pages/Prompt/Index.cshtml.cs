@@ -29,9 +29,7 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostCreateAsync([FromForm(Name = "CreateInput")] CreatePromptInput input)
     {
         if (await _context.Prompts.AnyAsync(p => p.Name == input.Name))
-        {
             ModelState.AddModelError("CreateInput.Name", "A prompt with this name already exists.");
-        }
 
         if (!ModelState.IsValid)
         {
@@ -64,7 +62,9 @@ public class IndexModel : PageModel
         var prompt = _context.Prompts.Find(input.Id);
         if (prompt == null)
         {
-            return NotFound();
+            ModelState.AddModelError("", "Prompt not found.");
+            await LoadProperties();
+            return Page();
         }
 
         prompt.Name = input.Name;
@@ -80,7 +80,11 @@ public class IndexModel : PageModel
     {
         var prompt = await _context.Prompts.FindAsync(id);
         if (prompt == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Prompt not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _context.Prompts.Remove(prompt);
 

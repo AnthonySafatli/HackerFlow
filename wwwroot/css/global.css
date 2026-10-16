@@ -179,3 +179,7 @@ footer {
   border-color: #6b4fe8;
   color: #fff;
 }
+
+.validation-summary-valid {
+  display: none;
+}

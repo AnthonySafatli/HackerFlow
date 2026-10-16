@@ -10,9 +10,9 @@ public class UpdateCompanyInput
     [Required]
     public string Name { get; set; } = "";
  
-    public string Website { get; set; } = "";
+    public string? Website { get; set; }
  
     public ReferralChance ReferralChance { get; set; }
  
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
 }

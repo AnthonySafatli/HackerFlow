@@ -6,9 +6,9 @@ public class CreateCompanyInput
 {
     public string Name { get; set; } = "";
 
-    public string Website { get; set; } = "";
+    public string? Website { get; set; }
 
-    public ReferralChance ReferralChance { get; set; } = ReferralChance.Low;
+    public ReferralChance ReferralChance { get; set; }
 
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
 }

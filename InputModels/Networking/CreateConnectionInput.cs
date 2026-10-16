@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using HackerFlow.Models;
 
 namespace HackerFlow.InputModels.Networking;
 
 public class CreateConnectionInput
 {
+    [Required]
     public string Name { get; set; } = "";
 
     public List<string> CompanyNames { get; set; } = new();

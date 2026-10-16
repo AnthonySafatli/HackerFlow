@@ -35,7 +35,7 @@
 
 <div>
     <!-- Page header -->
-    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
         <div>
             <h1 class="h3 mb-1">Networking</h1>
             <p class="text-secondary mb-0">Track your connections and the companies they link you to.</p>
@@ -52,9 +52,11 @@
             </button>
         </div>
     </div>
+    
+    <div asp-validation-summary="All" class="text-danger"></div>
 
     <!-- Tabs -->
-    <ul class="nav nav-tabs mb-3" id="networkingTabs" role="tablist">
+    <ul class="nav nav-tabs mb-3 mt-4" id="networkingTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="connections-tab" data-bs-toggle="tab" data-bs-target="#connections-pane"
                     type="button" role="tab" aria-controls="connections-pane" aria-selected="true">

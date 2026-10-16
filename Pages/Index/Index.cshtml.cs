@@ -111,9 +111,7 @@ public class IndexModel : PageModel
 
         var connection = null as Connection;
         if (!string.IsNullOrWhiteSpace(input.Connection))
-        {
             connection = await ResolveConnectionAsync(input.Connection);
-        }
 
         var application = new JobApplication
         {
@@ -134,25 +132,21 @@ public class IndexModel : PageModel
 
     public async Task<IActionResult> OnPostUpdateAsync([FromForm(Name = "UpdateInput")] UpdateApplicationInput input)
     {
-        if (!ModelState.IsValid)
+        var application = await _context.Applications.FindAsync(input.Id);
+        if (application == null)
+            ModelState.AddModelError("", "Application not found.");
+
+        if (!ModelState.IsValid || application == null) 
         {
             await LoadProperties();
             return Page();
-        }
-
-        var application = await _context.Applications.FindAsync(input.Id);
-        if (application == null)
-        {
-            return NotFound();
         }
 
         var company = await ResolveCompanyAsync(input.Company);
 
         var connection = null as Connection;
         if (!string.IsNullOrWhiteSpace(input.Connection))
-        {
             connection = await ResolveConnectionAsync(input.Connection);
-        }
 
         application.Company = company;
         application.Role = input.Role;
@@ -174,7 +168,11 @@ public class IndexModel : PageModel
     {
         var application  = await _context.Applications.FindAsync(id);
         if (application == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         if (application.Status >= ApplicationStatus.Accepted)
             return RedirectToPage();
@@ -194,21 +192,37 @@ public class IndexModel : PageModel
             .Include(x => x.Company)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (application == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         if (!string.IsNullOrWhiteSpace(application.ResumePath))
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Resume already generated for this application.");
+            await LoadProperties();
+            return Page();
+        }
 
         var resume = await _context.Resumes
             .Where(x => x.Name == group)
             .OrderByDescending(x => x.Version)
             .FirstOrDefaultAsync();
         if (resume == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Resume not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         var resumeData = await _file.ReadAsync(resume.FilePath);
         if (resumeData == null)
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Resume file not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         var ext = Path.GetExtension(resume.FilePath).ToLowerInvariant();
         var resumeFolder = await _settings.GetSetting(AppSetting.GeneratedResumeFolder);
@@ -216,7 +230,11 @@ public class IndexModel : PageModel
 
         var resumePath = await _file.SaveAsync(resumeFolder, resumeName, resumeData);
         if (resumePath == null) 
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Failed to save resume.");
+            await LoadProperties();
+            return Page();
+        }
 
         application.ResumePath = resumePath;
         await _context.SaveChangesAsync();
@@ -230,21 +248,37 @@ public class IndexModel : PageModel
             .Include(x => x.Company)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (application == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         if (!string.IsNullOrWhiteSpace(application.CoverLetterPath))
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Cover letter already generated for this application.");
+            await LoadProperties();
+            return Page();
+        }
 
         var coverLetter = await _context.CoverLetters
             .Where(x => x.Name == group)
             .OrderByDescending(x => x.Version)
             .FirstOrDefaultAsync();
         if (coverLetter == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Cover letter not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         var coverLetterData = await _file.ReadAsync(coverLetter.FilePath);
         if (coverLetterData == null)
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Cover letter file not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         var ext = Path.GetExtension(coverLetter.FilePath).ToLowerInvariant();
         var coverLetterFolder = await _settings.GetSetting(AppSetting.GeneratedCoverLetterFolder);
@@ -252,7 +286,11 @@ public class IndexModel : PageModel
 
         var coverLetterPath = await _file.SaveAsync(coverLetterFolder, coverLetterName, coverLetterData);
         if (coverLetterPath == null) 
-            return BadRequest();
+        {
+            ModelState.AddModelError("", "Failed to save cover letter.");
+            await LoadProperties();
+            return Page();
+        }
 
         application.CoverLetterPath = coverLetterPath;
         await _context.SaveChangesAsync();
@@ -264,7 +302,11 @@ public class IndexModel : PageModel
     {
         var application  = await _context.Applications.FindAsync(id);
         if (application == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         application.Status = ApplicationStatus.Archived;
         await _context.SaveChangesAsync();
@@ -276,7 +318,11 @@ public class IndexModel : PageModel
     {
         var application = await _context.Applications.FindAsync(id);
         if (application == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _context.Applications.Remove(application);
         await _context.SaveChangesAsync();
@@ -292,8 +338,19 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostOpenResumeAsync(int id)
     {
         var application = await _context.Applications.FindAsync(id);
-        if (string.IsNullOrWhiteSpace(application?.ResumePath) || !System.IO.File.Exists(application.ResumePath))
-            return NotFound();
+        if (application == null)
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
+
+        if (string.IsNullOrWhiteSpace(application.ResumePath) || !System.IO.File.Exists(application.ResumePath))
+        {
+            ModelState.AddModelError("", "Resume file not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _openFile.OpenFile(application.ResumePath);
 
@@ -304,8 +361,19 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnPostOpenCoverLetterAsync(int id)
     {
         var application = await _context.Applications.FindAsync(id);
-        if (string.IsNullOrWhiteSpace(application?.CoverLetterPath) || !System.IO.File.Exists(application.CoverLetterPath))
-            return NotFound();
+        if (application == null)
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
+
+        if (string.IsNullOrWhiteSpace(application.CoverLetterPath) || !System.IO.File.Exists(application.CoverLetterPath))
+        {
+            ModelState.AddModelError("", "Cover letter file not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _openFile.OpenFile(application.CoverLetterPath);
 

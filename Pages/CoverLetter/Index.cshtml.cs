@@ -161,7 +161,11 @@ public class IndexModel : PageModel
     {
         var coverLetter = await _context.CoverLetters.FindAsync(id);
         if (coverLetter == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Cover letter not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _context.CoverLetters.Remove(coverLetter);
         _file.Delete(coverLetter.FilePath);
@@ -175,7 +179,11 @@ public class IndexModel : PageModel
     {
         var coverLetter = await _context.CoverLetters.FindAsync(id);
         if (coverLetter == null || !System.IO.File.Exists(coverLetter.FilePath))
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Cover letter not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _openFile.OpenFile(coverLetter.FilePath);
         

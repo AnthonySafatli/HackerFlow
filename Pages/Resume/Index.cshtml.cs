@@ -161,7 +161,11 @@ public class IndexModel : PageModel
     {
         var resume = await _context.Resumes.FindAsync(id);
         if (resume == null)
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Resume not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _context.Resumes.Remove(resume);
         _file.Delete(resume.FilePath);
@@ -175,7 +179,11 @@ public class IndexModel : PageModel
     {
         var resume = await _context.Resumes.FindAsync(id);
         if (resume == null || !System.IO.File.Exists(resume.FilePath))
-            return NotFound();
+        {
+            ModelState.AddModelError("", "Resume not found.");
+            await LoadProperties();
+            return Page();
+        }
 
         _openFile.OpenFile(resume.FilePath);
 
