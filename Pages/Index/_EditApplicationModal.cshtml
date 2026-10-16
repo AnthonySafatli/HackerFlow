@@ -25,7 +25,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title" id="editApplicationModalLabel-@Model.Id">
-                        Edit Application — @Model.Company
+                        Edit Application — @Model.Company.Name
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -59,7 +59,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="editApp-company-@Model.Id" class="form-label">Company</label>
                                     <input type="text" class="form-control" id="editApp-company-@Model.Id"
-                                           name="UpdateInput.Company" value="@Model.Company" required />
+                                           name="UpdateInput.Company" value="@Model.Company.Name" required />
                                 </div>
 
                                 <div class="col-md-6 mb-3">

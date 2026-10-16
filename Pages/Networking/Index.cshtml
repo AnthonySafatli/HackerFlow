@@ -181,6 +181,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Application Amount</th>
                                     <th scope="col">Connection Amount</th>
                                     <th scope="col">Referral Chance</th>
                                     <th scope="col" class="text-end"><span class="visually-hidden">Actions</span></th>
@@ -196,8 +197,7 @@
                                                 @if (!string.IsNullOrWhiteSpace(company.Website))
                                                 {
                                                     <a href="@company.Website" target="_blank" rel="noopener"
-                                                       onclick="event.stopPropagation()"
-                                                       class="text-reset text-decoration-none">@company.Name</a>
+                                                       onclick="event.stopPropagation()" class="text-reset">@company.Name</a>
                                                 }
                                                 else
                                                 {
@@ -206,6 +206,7 @@
                                             </div>
                                             <div class="small text-secondary">@company.Description</div>
                                         </td>
+                                        <td><span class="text-secondary">@company.Applications.Count</span></td>
                                         <td><span class="text-secondary">@company.Connections.Count</span></td>
                                         <td>
                                             <span
@@ -220,7 +221,9 @@
                                             <form method="post" asp-page-handler="DeleteCompany" asp-route-id="@company.Id"
                                                   class="d-inline" onclick="event.stopPropagation()"
                                                   onsubmit="return confirm('Delete @company.Name?');">
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                <button type="submit"
+                                                        disabled="@(company.Applications.Any() || company.Connections.Any())"
+                                                        class="btn btn-danger btn-sm">Delete</button>
                                             </form>
                                         </td>
                                     </tr>

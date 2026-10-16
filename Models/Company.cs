@@ -13,6 +13,8 @@ public class Company
     public string Website { get; set; } = "";
 
     public List<Connection> Connections { get; set; } = new();
+    
+    public List<JobApplication> Applications { get; set; } = new();
 }
 
 public enum ReferralChance

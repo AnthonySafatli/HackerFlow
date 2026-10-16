@@ -36,7 +36,7 @@ public class HackerFlowContext : DbContext
         // Block deleting a company that still has applications (default is cascade)
         modelBuilder.Entity<JobApplication>()
             .HasOne(a => a.Company)
-            .WithMany()
+            .WithMany(c => c.Applications)   
             .HasForeignKey(a => a.CompanyId)
             .OnDelete(DeleteBehavior.Restrict);
 

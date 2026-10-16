@@ -56,7 +56,7 @@
                             origin += "/...";
 
                         <tr class="pointer" data-status="@application.Status.ToString().ToLowerInvariant()"
-                            data-bs-target="#detailsApplicationModal-@application.Id">
+                            data-bs-toggle="modal" data-bs-target="#detailsApplicationModal-@application.Id">
                             <td>
                                 <div class="fw-semibold">
                                     @application.Company.Name

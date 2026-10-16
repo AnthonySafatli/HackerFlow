@@ -285,7 +285,7 @@ namespace HackerFlow.Migrations
             modelBuilder.Entity("HackerFlow.Models.JobApplication", b =>
                 {
                     b.HasOne("HackerFlow.Models.Company", "Company")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -298,6 +298,11 @@ namespace HackerFlow.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("Connection");
+                });
+
+            modelBuilder.Entity("HackerFlow.Models.Company", b =>
+                {
+                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("HackerFlow.Models.Connection", b =>
