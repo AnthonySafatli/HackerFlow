@@ -69,6 +69,21 @@ public class IndexModel : PageModel
         return _context.Companies.AnyAsync(c => c.Id != excludeId && c.Name.ToLower() == lower);
     }
 
+    private async Task<IActionResult> CompanyPageAsync()
+    {
+        ActiveTab = "#companies-pane";
+        await LoadProperties();
+        return Page();
+    }
+
+    private IActionResult RedirectToCompanyPage()
+    {
+        ActiveTab = "#companies-pane";
+        return RedirectToPage(null, null, "companies-pane");
+    }
+
+    public string ActiveTab { get; private set; } = "";
+
     public async Task OnGetAsync()
     {
         await LoadProperties();
@@ -164,10 +179,7 @@ public class IndexModel : PageModel
             ModelState.AddModelError(nameof(input.Name), "A company with that name already exists.");
 
         if (!ModelState.IsValid)
-        {
-            await LoadProperties();
-            return Page();
-        }
+            return await CompanyPageAsync();
 
         var company = new Models.Company
         {
@@ -180,7 +192,7 @@ public class IndexModel : PageModel
         _context.Companies.Add(company);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage(null, null, "companies-pane");
+        return RedirectToCompanyPage();
     }
 
     public async Task<IActionResult> OnPostUpdateCompanyAsync([FromForm(Name = "UpdateCompanyInput")] UpdateCompanyInput input)
@@ -193,10 +205,7 @@ public class IndexModel : PageModel
             ModelState.AddModelError(nameof(input.Name), "A company with that name already exists.");
 
         if (!ModelState.IsValid || company == null)
-        {
-            await LoadProperties();
-            return Page();
-        }
+            return await CompanyPageAsync();
 
         company.Name = input.Name;
         company.Website = input.Website ?? "";
@@ -205,7 +214,7 @@ public class IndexModel : PageModel
 
         await _context.SaveChangesAsync();
 
-        return RedirectToPage(null, null, "companies-pane");
+        return RedirectToCompanyPage();
     }
 
     public async Task<IActionResult> OnPostDeleteCompanyAsync(int id)
@@ -219,14 +228,11 @@ public class IndexModel : PageModel
             ModelState.AddModelError("", "Company is still in use.");
 
         if (!ModelState.IsValid || company == null)
-        {
-            await LoadProperties();
-            return Page();
-        }
+            return await CompanyPageAsync();
 
         _context.Companies.Remove(company);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage(null, null, "companies-pane");
+        return RedirectToCompanyPage();
     }
 }

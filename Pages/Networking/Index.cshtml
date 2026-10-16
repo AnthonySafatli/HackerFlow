@@ -264,7 +264,7 @@
             );
 
             // Restore the selected tab from the URL on page load.
-            const hash = window.location.hash;
+            const hash = window.location.hash || "@Model.ActiveTab";
 
             if (hash) {
                 const targetButton = document.querySelector(
