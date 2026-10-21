@@ -30,7 +30,7 @@ public class IndexModel : PageModel
         Companies = await _context.Companies
             .Include(c => c.Connections)
             .Include(c => c.Applications)
-            .OrderBy(c => c.Name)
+            .OrderByDescending(c => c.ReferralChance)
             .ToListAsync();
     }
 

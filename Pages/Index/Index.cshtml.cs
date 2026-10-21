@@ -52,10 +52,12 @@ public class IndexModel : PageModel
             .ToListAsync();
 
         Companies = await _context.Companies
+            .OrderBy(x => x.Name)
             .Select(x => x.Name)
             .ToListAsync();
 
         Connections = await _context.Connections
+            .OrderBy(x => x.Name)
             .Select(x => x.Name)
             .ToListAsync();
     }
