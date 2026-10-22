@@ -16,10 +16,22 @@
             </p>
         </div>
 
-        <button type="button" id="newApplicationButton" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
-                data-bs-target="#newApplicationModal">
-            New Application <span class="ms-1">+</span>
-        </button>
+        <div class="d-flex gap-2">
+            <div>
+                <partial name="_ActionButton" model="@(new ActionButtonVM
+                         {
+                             Label = $" Purge Packages",
+                             CssClass = "btn-outline-danger px-4",
+                             Url = $"/api/applications/packages",
+                             Method = "DELETE",
+                         })" />
+            </div>
+
+            <button type="button" id="newApplicationButton" class="btn btn-hf-primary px-4" data-bs-toggle="modal"
+                    data-bs-target="#newApplicationModal">
+                New Application <span class="ms-1">+</span>
+            </button>
+        </div>
     </div>
 
     <div asp-validation-summary="All" class="text-danger"></div>
@@ -65,8 +77,7 @@
                                 </div>
 
                                 <a href="@application.Url" target="_blank" rel="noopener noreferrer"
-                                   onclick="event.stopPropagation()"
-                                   class="small text-secondary text-decoration-none">
+                                   onclick="event.stopPropagation()" class="small text-secondary text-decoration-none">
                                     @origin
                                 </a>
                             </td>

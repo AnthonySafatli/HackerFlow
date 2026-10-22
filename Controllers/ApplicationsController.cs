@@ -10,6 +10,16 @@ namespace HackerFlow.Controllers;
 [Route("api/[controller]")]
 public class ApplicationsController : ControllerBase
 {
+    private const string PackagesCookie = "packages";
+
+    private string DownloadsPath =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+    private List<string> GetPackageFolders() =>
+        (Request.Cookies[PackagesCookie] ?? "")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .ToList();
+
     private readonly HackerFlowContext _context;
     private readonly IAppSettingsService _settings;
     private readonly IFileService _file;
@@ -80,7 +90,8 @@ public class ApplicationsController : ControllerBase
         var companyName = Regex.Replace(application.Company.Name, "[^a-zA-Z0-9_-]", "");
         var roleName = Regex.Replace(application.Role, "[^a-zA-Z0-9_-]", "");
 
-        var packageFolder = $"~/Downloads/{companyName}_{roleName}_Package";
+        var folderName = $"{companyName}_{roleName}_Package";
+        var packageFolder = Path.Combine(DownloadsPath, folderName);
         var resumeExt = Path.GetExtension(application.ResumePath).ToLowerInvariant();
         var coverLetterExt = Path.GetExtension(application.CoverLetterPath).ToLowerInvariant();
         var resumeName = $"AnthonySafatli_Resume_{companyName}{resumeExt}";
@@ -96,7 +107,42 @@ public class ApplicationsController : ControllerBase
 
         await Task.WhenAll(saveTasks);
 
+        var folders = GetPackageFolders();
+        if (!folders.Contains(folderName))
+            folders.Add(folderName);
+
+        Response.Cookies.Append(PackagesCookie, string.Join(",", folders), new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTimeOffset.UtcNow.AddYears(1)
+        });
+
         return Ok();
+    }
+
+    [HttpDelete("packages")]
+    public IActionResult PurgePackages()
+    {
+        var deleted = new List<string>();
+
+        foreach (var name in GetPackageFolders())
+        {
+            // Cookies can be tampered with, so only delete names that match our own pattern
+            if (!Regex.IsMatch(name, "^[a-zA-Z0-9_-]+_Package$"))
+                continue;
+
+            var path = Path.Combine(DownloadsPath, name);
+            if (Directory.Exists(path))
+            {
+                Directory.Delete(path, true);
+                deleted.Add(name);
+            }
+        }
+
+        Response.Cookies.Delete(PackagesCookie);
+        return Ok(deleted);
     }
 
     private async Task<string> ReadDocumentAsync(string? path, CancellationToken ct)
