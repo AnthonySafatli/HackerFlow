@@ -6,6 +6,7 @@
     {
         ReferralChance.High => "text-bg-success",
         ReferralChance.Medium => "text-bg-warning",
+        ReferralChance.Low => "text-bg-info",
         _ => "text-bg-secondary"
     };
 }
@@ -35,8 +36,7 @@
                         <div class="hf-detail-value">
                             @if (!string.IsNullOrWhiteSpace(Model.Website))
                             {
-                                <a href="@Model.Website" target="_blank"
-                                   rel="noopener noreferrer">@Model.Website</a>
+                                <a href="@Model.Website" target="_blank" rel="noopener noreferrer">@Model.Website</a>
                             }
                             else
                             {
@@ -62,9 +62,8 @@
                         {
                             @foreach (var connection in Model.Connections.OrderBy(c => c.Name))
                             {
-                                <button type="button" class="badge text-bg-secondary border-0 me-1"
-                                        data-bs-dismiss="modal" data-bs-toggle="modal"
-                                        data-bs-target="#detailsConnectionModal-@connection.Id">
+                                <button type="button" class="badge text-bg-secondary border-0 me-1" data-bs-dismiss="modal"
+                                        data-bs-toggle="modal" data-bs-target="#detailsConnectionModal-@connection.Id">
                                     @connection.Name
                                 </button>
                             }
