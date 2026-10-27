@@ -8,7 +8,7 @@ public class Company
 
     public string Description { get; set; } = "";
 
-    public ReferralChance ReferralChance { get; set; } = ReferralChance.Low;
+    public ReferralChance ReferralChance { get; set; } = ReferralChance.None;
 
     public string Website { get; set; } = "";
 
@@ -19,6 +19,7 @@ public class Company
 
 public enum ReferralChance
 {
+    None = 0,
     Low = 1,
     Medium = 2,
     High = 3

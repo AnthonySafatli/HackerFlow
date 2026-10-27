@@ -122,7 +122,7 @@ public class IndexModel : PageModel
     {
         if (input.IntroducedById == input.Id)
             ModelState.AddModelError(nameof(input.IntroducedById), "A connection can't introduce itself.");
-        else if (!await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
+        else if (input.IntroducedById != null && !await _context.Connections.AnyAsync(c => c.Id == input.IntroducedById))
             ModelState.AddModelError(nameof(input.IntroducedById), "That introducer doesn't exist.");
         
         var connection = await _context.Connections
