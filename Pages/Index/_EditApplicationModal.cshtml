@@ -141,7 +141,8 @@
                                         <label for="editApp-connection-@Model.JobApplicaiton.Id"
                                                class="form-label">Connection</label>
                                         <input type="text" class="form-control" id="editApp-connection-@Model.JobApplicaiton.Id"
-                                               name="UpdateInput.Connection" value="@Model.JobApplicaiton.Connection"
+                                               name="UpdateInput.Connection"
+                                               value="@(Model.JobApplicaiton.Connection?.Name ?? string.Empty)"
                                                list="existingConnections" />
                                         <datalist id="existingConnections">
                                             @foreach (var connection in Model.Connections)
