@@ -1,16 +1,16 @@
-using HackerFlow.Data;
-using HackerFlow.InputModels.Networking;
+using Venture.Data;
+using Venture.InputModels.Networking;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace HackerFlow.Pages.Networking;
+namespace Venture.Pages.Networking;
 
 public class IndexModel : PageModel
 {
-    private readonly HackerFlowContext _context;
+    private readonly VentureContext _context;
 
-    public IndexModel(HackerFlowContext context)
+    public IndexModel(VentureContext context)
     {
         _context = context;
     }

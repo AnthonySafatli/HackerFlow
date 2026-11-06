@@ -1,22 +1,22 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using HackerFlow.Models;
-using HackerFlow.Data;
+using Venture.Models;
+using Venture.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using HackerFlow.Services;
-using HackerFlow.InputModels;
-using HackerFlow.InputModels.CoverLetter;
+using Venture.Services;
+using Venture.InputModels;
+using Venture.InputModels.CoverLetter;
 
-namespace HackerFlow.Pages.CoverLetter;
+namespace Venture.Pages.CoverLetter;
 
 public class IndexModel : PageModel
 {
-    private readonly HackerFlowContext _context;
+    private readonly VentureContext _context;
     private readonly IAppSettingsService _settings;
     private readonly IFileService _file;
     private readonly IOpenFileService _openFile;
 
-    public IndexModel(HackerFlowContext context, IAppSettingsService settings, IFileService file, IOpenFileService openFile)
+    public IndexModel(VentureContext context, IAppSettingsService settings, IFileService file, IOpenFileService openFile)
     {
         _context = context;
         _settings = settings;

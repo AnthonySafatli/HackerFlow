@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HackerFlow.InputModels.Resume;
+namespace Venture.InputModels.Resume;
 
 public class CreateResumeInput
 {

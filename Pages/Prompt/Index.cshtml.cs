@@ -1,17 +1,17 @@
-using HackerFlow.Data;
-using HackerFlow.InputModels.Prompt;
+using Venture.Data;
+using Venture.InputModels.Prompt;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
-namespace HackerFlow.Pages.Prompt;
+namespace Venture.Pages.Prompt;
 
 public class IndexModel : PageModel
 {
-    private readonly HackerFlowContext _context;
+    private readonly VentureContext _context;
 
-    public IndexModel(HackerFlowContext context)
+    public IndexModel(VentureContext context)
     {
         _context = context;
     }

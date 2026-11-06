@@ -1,6 +1,6 @@
-using HackerFlow.Models;
+using Venture.Models;
 
-namespace HackerFlow.ViewModels;
+namespace Venture.ViewModels;
 
 public class ApplicaitonEditModalVM
 {

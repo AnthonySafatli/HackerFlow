@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Config
 
 @{
-    var title = ViewData["Title"] ?? "HackerFlow";
+    var title = ViewData["Title"] ?? "Venture";
 }
 
 <!DOCTYPE html>
@@ -11,9 +11,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="icon" href="~/images/hackerflow-h.svg" type="image/x-icon">
+    <link rel="icon" href="~/images/venture-h.svg" type="image/x-icon">
 
-    <title>@title - HackerFlow</title>
+    <title>@title - Venture</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
@@ -29,10 +29,10 @@
 
                 <!-- Brand -->
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-page="/Index/Index"
-                   aria-label="HackerFlow home">
-                    <img src="~/images/hackerflow-h.svg" alt="" width="36" height="36" />
+                   aria-label="Venture home">
+                    <img src="~/images/venture-h.svg" alt="" width="36" height="36" />
 
-                    <span class="fw-semibold">HackerFlow</span>
+                    <span class="fw-semibold">Venture</span>
                 </a>
 
                 <!-- Mobile menu -->
@@ -91,7 +91,7 @@
     <footer class="border-top py-3 mt-auto">
         <div class="container-fluid px-4">
             <div class="d-flex justify-content-center align-items-center small text-secondary gap-2">
-                <span><strong>HackerFlow</strong></span> <strong>|</strong>
+                <span><strong>Venture</strong></span> <strong>|</strong>
                 <span>An Application by <strong>Anthony Safatli</strong></span> <strong>|</strong>
                 <span>@("v" + Config["AppVersion"])</span> <strong>|</strong>
                 <span>&copy; @DateTime.Now.Year</span>

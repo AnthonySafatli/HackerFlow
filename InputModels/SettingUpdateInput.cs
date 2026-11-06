@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HackerFlow.InputModels;
+namespace Venture.InputModels;
 
 public class SettingUpdateInput
 {

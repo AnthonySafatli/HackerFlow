@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HackerFlow.InputModels.CoverLetter;
+namespace Venture.InputModels.CoverLetter;
 
 public class CreateCoverLetterInput
 {
