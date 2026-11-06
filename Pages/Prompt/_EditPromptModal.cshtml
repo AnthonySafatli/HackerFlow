@@ -28,7 +28,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="editPrompt-text-@Model.Id" class="form-label">Prompt</label>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <label for="editPrompt-text-@Model.Id" class="form-label mb-0">Prompt</label>
+                            <partial name="_PromptHelpPopup" />
+                        </div>
                         <textarea class="form-control" id="editPrompt-text-@Model.Id" name="UpdateInput.PromptString"
                                   rows="8" required>@Model.PromptString</textarea>
                     </div>

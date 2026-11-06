@@ -60,7 +60,20 @@ public class ApplicationsController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(application.JobDescription))
             result = result.Replace("{{jobDescription}}", application.JobDescription);
+
+        result = result.Replace("{{jobTitle}}", application.Role);
+        result = result.Replace("{{jobUrl}}", application.Url);
+        result = result.Replace("{{applicationMethod}}", application.Method);
+        result = result.Replace("{{notes}}", application.Notes ?? "");
+        result = result.Replace("{{applicationStatus}}", application.Status.ToString());
+        result = result.Replace("{{dateApplied}}", application.DateApplied?.ToString("yyyy-MM-dd") ?? "");
         
+        result = result.Replace("{{companyName}}", application.Company.Name);
+        result = result.Replace("{{companyReferralChance}}", application.Company.ReferralChance.ToString());
+
+        if (!string.IsNullOrWhiteSpace(application.Company.Website))
+            result = result.Replace("{{companySite}}", application.Company.Website);
+
         return Ok(new { prompt = result });
     }
 
