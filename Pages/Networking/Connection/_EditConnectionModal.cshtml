@@ -1,5 +1,5 @@
-@model HackerFlow.Models.Connection
-@using HackerFlow.Models
+@model Venture.Models.Connection
+@using Venture.Models
 @using System.Text.RegularExpressions
 
 @{
@@ -52,8 +52,7 @@
                                     @company.Name
                                     <button type="button" class="btn-close btn-close-white" style="font-size: 0.6rem;"
                                             aria-label="Remove @company.Name"></button>
-                                    <input type="hidden" name="UpdateConnectionInput.CompanyNames"
-                                           value="@company.Name" />
+                                    <input type="hidden" name="UpdateConnectionInput.CompanyNames" value="@company.Name" />
                                 </span>
                             }
                         </div>
@@ -129,8 +128,7 @@
 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="editConn-canIntroduce-@Model.Id"
-                               name="UpdateConnectionInput.CanIntroduceMe" value="true"
-                               checked="@Model.CanIntroduceMe" />
+                               name="UpdateConnectionInput.CanIntroduceMe" value="true" checked="@Model.CanIntroduceMe" />
                         <label class="form-check-label" for="editConn-canIntroduce-@Model.Id">Can introduce me</label>
                         <input type="hidden" name="UpdateConnectionInput.CanIntroduceMe" value="false" />
                     </div>

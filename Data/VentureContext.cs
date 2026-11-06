@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using HackerFlow.Models;
+using Venture.Models;
 
-namespace HackerFlow.Data;
+namespace Venture.Data;
 
-public class HackerFlowContext : DbContext
+public class VentureContext : DbContext
 {
-    public HackerFlowContext(DbContextOptions<HackerFlowContext> options)
+    public VentureContext(DbContextOptions<VentureContext> options)
         : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

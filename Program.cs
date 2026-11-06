@@ -1,5 +1,5 @@
-using HackerFlow.Data;
-using HackerFlow.Services;
+using Venture.Data;
+using Venture.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<HackerFlowContext>(options =>
+builder.Services.AddDbContext<VentureContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAppSettingsService, AppSettingsService>();
@@ -23,7 +23,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<HackerFlowContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<VentureContext>().Database.Migrate();
 }
 
 app.UseHttpsRedirection();

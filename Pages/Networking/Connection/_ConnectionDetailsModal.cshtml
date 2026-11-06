@@ -1,5 +1,5 @@
-@model HackerFlow.Models.Connection
-@using HackerFlow.Models
+@model Venture.Models.Connection
+@using Venture.Models
 @using System.Text.RegularExpressions
 
 @{
@@ -39,7 +39,8 @@
                     <div class="col-md-6 hf-detail-row">
                         <div class="hf-detail-label">Closeness</div>
                         <div class="hf-detail-value">
-                            <span class="badge @CloseBadge(Model.Closeness)">@Humanize(Model.Closeness.ToString())</span>
+                            <span
+                            class="badge @CloseBadge(Model.Closeness)">@Humanize(Model.Closeness.ToString())</span>
                         </div>
                     </div>
 
@@ -56,9 +57,8 @@
                         {
                             @foreach (var company in Model.Companies)
                             {
-                                <button type="button" class="badge text-bg-secondary border-0 me-1"
-                                        data-bs-dismiss="modal" data-bs-toggle="modal"
-                                        data-bs-target="#detailsCompanyModal-@company.Id">
+                                <button type="button" class="badge text-bg-secondary border-0 me-1" data-bs-dismiss="modal"
+                                        data-bs-toggle="modal" data-bs-target="#detailsCompanyModal-@company.Id">
                                     @company.Name
                                 </button>
                             }
@@ -106,9 +106,8 @@
                         {
                             @foreach (var person in Model.IntroducedTo.OrderBy(p => p.Name))
                             {
-                                <button type="button" class="badge text-bg-secondary border-0 me-1"
-                                        data-bs-dismiss="modal" data-bs-toggle="modal"
-                                        data-bs-target="#detailsConnectionModal-@person.Id">
+                                <button type="button" class="badge text-bg-secondary border-0 me-1" data-bs-dismiss="modal"
+                                        data-bs-toggle="modal" data-bs-target="#detailsConnectionModal-@person.Id">
                                     @person.Name
                                 </button>
                             }

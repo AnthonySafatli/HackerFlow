@@ -1,6 +1,6 @@
-using HackerFlow.Models;
+using Venture.Models;
 
-namespace HackerFlow.InputModels.Networking;
+namespace Venture.InputModels.Networking;
 
 public class CreateCompanyInput
 {

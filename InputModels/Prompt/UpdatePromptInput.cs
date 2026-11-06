@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using HackerFlow.Models;
+using Venture.Models;
 
-namespace HackerFlow.InputModels.Prompt;
+namespace Venture.InputModels.Prompt;
 
 public class UpdatePromptInput
 {

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using HackerFlow.Models;
+using Venture.Models;
 
-namespace HackerFlow.InputModels.Index;
+namespace Venture.InputModels.Index;
 
 public class CreateApplicationInput
 {

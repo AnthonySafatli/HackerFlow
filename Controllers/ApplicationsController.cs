@@ -1,10 +1,10 @@
 using System.Text.RegularExpressions;
-using HackerFlow.Data;
-using HackerFlow.Services;
+using Venture.Data;
+using Venture.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace HackerFlow.Controllers;
+namespace Venture.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,12 +20,12 @@ public class ApplicationsController : ControllerBase
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
             .ToList();
 
-    private readonly HackerFlowContext _context;
+    private readonly VentureContext _context;
     private readonly IAppSettingsService _settings;
     private readonly IFileService _file;
     private readonly IDocumentTextExtractor _extractor;
 
-    public ApplicationsController(HackerFlowContext context, IAppSettingsService settings, IFileService file, IDocumentTextExtractor extractor)
+    public ApplicationsController(VentureContext context, IAppSettingsService settings, IFileService file, IDocumentTextExtractor extractor)
     {
         _context = context;
         _settings = settings;

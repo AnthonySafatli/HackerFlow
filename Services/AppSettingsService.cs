@@ -1,15 +1,15 @@
-using HackerFlow.Data;
-using HackerFlow.Models;
+using Venture.Data;
+using Venture.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HackerFlow.Services;
+namespace Venture.Services;
 
 public class AppSettingsService : IAppSettingsService
 {
     private readonly IConfiguration _config;
-    private readonly HackerFlowContext _context;
+    private readonly VentureContext _context;
 
-    public AppSettingsService(IConfiguration config, HackerFlowContext context)
+    public AppSettingsService(IConfiguration config, VentureContext context)
     {
         _config = config;
         _context = context;
