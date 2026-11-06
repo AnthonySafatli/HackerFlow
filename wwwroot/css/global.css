@@ -183,3 +183,44 @@ footer {
 .validation-summary-valid {
   display: none;
 }
+
+/* Popover */
+
+.popover {
+  --bs-popover-bg: var(--hf-surface);
+  --bs-popover-border-color: var(--hf-border);
+  --bs-popover-header-bg: var(--hf-surface-hover);
+  --bs-popover-header-color: var(--hf-text);
+  --bs-popover-body-color: var(--hf-text);
+  --bs-popover-box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
+}
+
+.popover-header {
+  border-bottom-color: var(--hf-border);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.popover code {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.8125rem;
+  background-color: rgba(137, 207, 240, 0.25);
+  color: #89cff0;
+  border-radius: 4px;
+  padding: 0 3px;
+}
+
+/* Help "?" button */
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--hf-muted);
+  --bs-btn-border-color: var(--hf-border);
+  --bs-btn-hover-bg: var(--hf-surface-hover);
+  --bs-btn-hover-border-color: var(--hf-primary);
+  --bs-btn-hover-color: var(--hf-text);
+  --bs-btn-active-bg: var(--hf-surface-hover);
+  --bs-btn-active-border-color: var(--hf-primary);
+  --bs-btn-active-color: var(--hf-text);
+  --bs-btn-focus-shadow-rgb: 124, 92, 255;
+}

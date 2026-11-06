@@ -1,0 +1,37 @@
+@{
+    var id = "help_" + Guid.NewGuid().ToString("N");
+
+    var placeholders = new Dictionary<string, string>
+    {
+        ["resume"] = "The text from the generated resume",
+        ["coverLetter"] = "The text from the generated cover letter",
+        ["jobDescription"] = "Description of the job position"
+    };
+
+}
+
+<button type="button" id="@id" class="btn btn-outline-secondary btn-sm rounded-circle p-0 fw-bold"
+        style="width:1.5rem;height:1.5rem;line-height:1;" aria-label="Show available placeholders">?</button>
+
+<div id="@(id)_content" class="d-none">
+    <p class="mb-2 small">Type a placeholder in the text area and it will be replaced with its value:</p>
+    <ul class="list-unstyled mb-0 small">
+        @foreach (var p in placeholders)
+        {
+            <li class="mb-1"><code>{{@p.Key}}</code> &ndash; @p.Value</li>
+        }
+    </ul>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tpl = document.getElementById('@(id)_content');
+        new bootstrap.Popover(document.getElementById('@id'), {
+            title: 'Available placeholders',
+            content: tpl.innerHTML,
+            html: true,
+            trigger: 'hover focus',
+            placement: 'right'
+        });
+    });
+</script>

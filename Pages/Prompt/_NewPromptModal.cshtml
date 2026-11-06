@@ -21,7 +21,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="newPrompt-text" class="form-label">Prompt</label>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <label for="newPrompt-text" class="form-label mb-0">Prompt</label>
+                            <partial name="_PromptHelpPopup" />
+                        </div>
                         <textarea class="form-control" id="newPrompt-text" name="CreateInput.PromptString" rows="8"
                                   required></textarea>
                     </div>
