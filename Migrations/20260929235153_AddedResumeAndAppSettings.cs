@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace HackerFlow.Migrations
+namespace Venture.Migrations
 {
     /// <inheritdoc />
     public partial class AddedResumeAndAppSettings : Migration
