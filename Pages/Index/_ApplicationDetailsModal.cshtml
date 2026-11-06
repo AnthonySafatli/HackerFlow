@@ -272,6 +272,13 @@
 
                             <br />
 
+                            <form asp-page-handler="Rejected" method="post">
+                                <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    Mark as Rejected
+                                </button>
+                            </form>
+
                             <form asp-page-handler="Archive" method="post">
                                 <input type="hidden" name="id" value="@Model.JobApplicaiton.Id" />
                                 <button type="submit" class="btn btn-outline-danger w-100">

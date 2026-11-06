@@ -300,6 +300,22 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
+    public async Task<IActionResult> OnPostRejectedAsync(int id)
+    {
+        var application  = await _context.Applications.FindAsync(id);
+        if (application == null)
+        {
+            ModelState.AddModelError("", "Application not found.");
+            await LoadProperties();
+            return Page();
+        }
+
+        application.Status = ApplicationStatus.Rejected;
+        await _context.SaveChangesAsync();
+
+        return RedirectToPage();
+    }
+
     public async Task<IActionResult> OnPostArchiveAsync(int id)
     {
         var application  = await _context.Applications.FindAsync(id);
