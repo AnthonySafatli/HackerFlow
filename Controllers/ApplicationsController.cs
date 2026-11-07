@@ -3,6 +3,7 @@ using Venture.Data;
 using Venture.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Venture.Models;
 
 namespace Venture.Controllers;
 
@@ -11,14 +12,6 @@ namespace Venture.Controllers;
 public class ApplicationsController : ControllerBase
 {
     private const string PackagesCookie = "packages";
-
-    private string DownloadsPath =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-
-    private List<string> GetPackageFolders() =>
-        (Request.Cookies[PackagesCookie] ?? "")
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .ToList();
 
     private readonly VentureContext _context;
     private readonly IAppSettingsService _settings;
@@ -104,7 +97,7 @@ public class ApplicationsController : ControllerBase
         var roleName = Regex.Replace(application.Role, "[^a-zA-Z0-9_-]", "");
 
         var folderName = $"{companyName}_{roleName}_Package";
-        var packageFolder = Path.Combine(DownloadsPath, folderName);
+        var packageFolder = Path.Combine(await _settings.GetSetting(AppSetting.PackageOutputFolder), folderName);
         var resumeExt = Path.GetExtension(application.ResumePath).ToLowerInvariant();
         var coverLetterExt = Path.GetExtension(application.CoverLetterPath).ToLowerInvariant();
         var resumeName = $"AnthonySafatli_Resume_{companyName}{resumeExt}";
@@ -121,16 +114,10 @@ public class ApplicationsController : ControllerBase
         await Task.WhenAll(saveTasks);
 
         var folders = GetPackageFolders();
-        if (!folders.Contains(folderName))
-            folders.Add(folderName);
+        if (!folders.Contains(packageFolder, StringComparer.OrdinalIgnoreCase))
+            folders.Add(packageFolder);
 
-        Response.Cookies.Append(PackagesCookie, string.Join(",", folders), new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTimeOffset.UtcNow.AddYears(1)
-        });
+        SavePackageFolders(folders);
 
         return Ok();
     }
@@ -140,17 +127,18 @@ public class ApplicationsController : ControllerBase
     {
         var deleted = new List<string>();
 
-        foreach (var name in GetPackageFolders())
+        foreach (var path in GetPackageFolders())
         {
-            // Cookies can be tampered with, so only delete names that match our own pattern
-            if (!Regex.IsMatch(name, "^[a-zA-Z0-9_-]+_Package$"))
+            // Cookies can be tampered with, so only delete rooted paths whose
+            // folder name matches our own pattern
+            var leaf = Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            if (!Path.IsPathRooted(path) || !Regex.IsMatch(leaf, "^[a-zA-Z0-9_-]+_Package$"))
                 continue;
 
-            var path = Path.Combine(DownloadsPath, name);
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
-                deleted.Add(name);
+                deleted.Add(path);
             }
         }
 
@@ -166,4 +154,22 @@ public class ApplicationsController : ControllerBase
         await using var stream = System.IO.File.OpenRead(path);
         return await _extractor.ExtractTextAsync(stream, path, ct);
     }
+
+    private List<string> GetPackageFolders() =>
+        (Request.Cookies[PackagesCookie] ?? "")
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(Uri.UnescapeDataString)
+            .ToList();
+
+    private void SavePackageFolders(List<string> folders) =>
+        Response.Cookies.Append(
+            PackagesCookie,
+            string.Join(",", folders.Select(Uri.EscapeDataString)),
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddYears(1)
+            });
 }
