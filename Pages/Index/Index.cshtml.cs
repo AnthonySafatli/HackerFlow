@@ -101,6 +101,15 @@ public class IndexModel : PageModel
         return connectionObj;
     }
 
+    private RedirectToPageResult RedirectToPage(JobApplication application)
+    {
+        return RedirectToPage(
+            "/Index/Index",
+            pageHandler: null,
+            routeValues: new { selected = application.Id },
+            fragment: application.Status.ToString().ToLowerInvariant());
+    }
+
     public async Task OnGetAsync()
     {
         await LoadProperties();
@@ -134,7 +143,7 @@ public class IndexModel : PageModel
         _context.Applications.Add(application);
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(application);
     }
 
     public async Task<IActionResult> OnPostUpdateAsync([FromForm(Name = "UpdateInput")] UpdateApplicationInput input)
@@ -168,7 +177,7 @@ public class IndexModel : PageModel
 
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(application);
     }
 
     public async Task<IActionResult> OnPostContinuePipelineAsync(int id)
@@ -246,7 +255,7 @@ public class IndexModel : PageModel
         application.ResumePath = resumePath;
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(application);
     }
 
     public async Task<IActionResult> OnPostGenerateCoverLetter(int id, string group)
@@ -302,7 +311,7 @@ public class IndexModel : PageModel
         application.CoverLetterPath = coverLetterPath;
         await _context.SaveChangesAsync();
 
-        return RedirectToPage();
+        return RedirectToPage(application);
     }
 
     public async Task<IActionResult> OnPostRejectedAsync(int id)
