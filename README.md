@@ -18,6 +18,12 @@ Each application has its own resume and cover letter attached, so I can copy and
 
 I can also build custom AI prompts by injecting the resume, cover letter, and job description into a premade prompt. This automates that step too.
 
+### Networking
+
+This has two panes, the Connections pane and the Companies pane. It with the Job Tracker to keep track of all your connections and companys
+
+You can organize your connections, and see what companies you have been applying to or want to apply to, setting properties for each to help with your networking endeavors.
+
 ### Resumes
 
 This holds my base resumes. Each resume has a name. To update one, I just upload the new version with the same name and it gets added as a new version. All versions are kept in the app.
@@ -42,12 +48,12 @@ Next, add this script to `~/.local/bin/venture`
 #!/bin/bash
 set -euo pipefail
 
-SRC="$HOME/source/venture"          # <- your source folder (contains the .csproj)
+SRC="$HOME/source/Venture"          # <- your source folder (contains the .csproj)
 APP="$HOME/apps/venture"
 STATE="$HOME/.local/state/venture"
 PIDFILE="$STATE/pid"
 LOG="$STATE/venture.log"
-URL="http://127.0.0.1:5000"
+URL="http://127.0.0.1:4999"
 
 mkdir -p "$APP" "$STATE"
 
