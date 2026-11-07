@@ -5,6 +5,7 @@ using Venture.Data;
 using Microsoft.EntityFrameworkCore;
 using Venture.InputModels.Index;
 using Venture.Services;
+using Venture.Utils;
 
 namespace Venture.Pages.Index;
 
@@ -29,6 +30,8 @@ public class IndexModel : PageModel
     public List<string> Prompts { get; private set; } = [];
     public List<string> Companies { get; private set; } = [];
     public List<string> Connections { get; private set; } = [];
+
+    public string PackageOutputFolder { get; private set; } = "";
 
     private async Task LoadProperties()
     {
@@ -60,6 +63,8 @@ public class IndexModel : PageModel
             .OrderBy(x => x.Name)
             .Select(x => x.Name)
             .ToListAsync();
+
+        PackageOutputFolder = await _settings.GetSetting(AppSetting.PackageOutputFolder);
     }
 
     private async Task<Company> ResolveCompanyAsync(string company)
@@ -397,5 +402,39 @@ public class IndexModel : PageModel
 
         // stays on the current page
         return new NoContentResult(); 
+    }
+
+    public async Task<IActionResult> OnPostSaveSettings([FromForm(Name = "SettingsInput")] SettingsInput settingsInput)
+    {
+        if (!ModelState.IsValid)
+        {
+            await LoadProperties();
+            return Page();
+        }
+
+        var path = PathUtils.ExpandHome(settingsInput.PackageOutputPath);
+
+        if (!Path.IsPathFullyQualified(path))
+        {
+            ModelState.AddModelError("SettingsInput.PackageOutputPath", "Path must be absolute.");
+            await LoadProperties();
+            return Page();
+        }
+
+        try
+        {
+            Directory.CreateDirectory(path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
+                                    or ArgumentException or NotSupportedException)
+        {
+            ModelState.AddModelError("SettingsInput.PackageOutputPath", "Can't create or access that folder.");
+            await LoadProperties();
+            return Page();
+        }
+
+        await _settings.SetSetting(AppSetting.PackageOutputFolder, path);
+
+        return RedirectToPage();
     }
 }

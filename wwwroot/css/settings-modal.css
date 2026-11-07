@@ -1,0 +1,26 @@
+.hf-unsaved {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid #ffc107;
+  animation: hf-pulse 1.6s ease-in-out infinite;
+}
+
+.hf-field.is-dirty .form-control {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.2);
+}
+
+.hf-field.is-dirty .form-label::after {
+  content: " ●";
+  color: #ffc107;
+}
+
+#settingsSave:not(:disabled) {
+  animation: hf-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hf-pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
