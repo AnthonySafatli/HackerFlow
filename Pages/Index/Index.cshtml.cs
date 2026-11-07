@@ -412,11 +412,10 @@ public class IndexModel : PageModel
             return Page();
         }
 
-        var path = PathUtils.ExpandHome(settingsInput.PackageOutputPath);
-
-        if (!Path.IsPathFullyQualified(path))
+        // TODO: You may need to distigush which setting caused the error once there is more than one
+        if (!PathUtils.TryNormalize(settingsInput.PackageOutputPath, out var path, out var error))
         {
-            ModelState.AddModelError("SettingsInput.PackageOutputPath", "Path must be absolute.");
+            ModelState.AddModelError("", error!);
             await LoadProperties();
             return Page();
         }
@@ -425,16 +424,14 @@ public class IndexModel : PageModel
         {
             Directory.CreateDirectory(path);
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException
-                                    or ArgumentException or NotSupportedException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            ModelState.AddModelError("SettingsInput.PackageOutputPath", "Can't create or access that folder.");
+            ModelState.AddModelError("", "Can't create or access that folder.");
             await LoadProperties();
             return Page();
         }
 
         await _settings.SetSetting(AppSetting.PackageOutputFolder, path);
-
         return RedirectToPage();
     }
 }

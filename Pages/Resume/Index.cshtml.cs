@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Venture.InputModels.Resume;
 using Venture.Services;
 using Venture.InputModels;
+using Venture.Utils;
 
 namespace Venture.Pages.Resume;
 
@@ -46,32 +47,58 @@ public class IndexModel : PageModel
         await LoadProperties();
     }
 
-    public async Task<IActionResult> OnPostResumeFolderAsync([FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    private bool TryPrepareFolder(string? raw, out string folder)
     {
-        if (!ModelState.IsValid)
+        const string key = "ValueInput.Value";
+
+        if (!PathUtils.TryNormalize(raw, out folder, out var error))
+        {
+            ModelState.AddModelError(key, error!);
+            return false;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(folder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            ModelState.AddModelError(key, "Can't create or access that folder.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task<IActionResult> OnPostResumeFolderAsync(
+        [FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    {
+        if (!ModelState.IsValid || !TryPrepareFolder(input?.Value, out var newFolder))
         {
             await LoadProperties();
             return Page();
         }
 
-        var newFolder = input.Value;
-
-        Directory.CreateDirectory(newFolder);
-
         var resumes = await _context.Resumes.ToListAsync();
+
+        // Check everything exists before moving anything
+        var missing = resumes.FirstOrDefault(r => !System.IO.File.Exists(r.FilePath));
+        if (missing != null)
+        {
+            ModelState.AddModelError("", $"Could not find resume file: {missing.FilePath}");
+            await LoadProperties();
+            return Page();
+        }
 
         foreach (var resume in resumes)
         {
-            var newPath = await _file.MoveAsync(
-                resume.FilePath,
-                newFolder);
+            var newPath = await _file.MoveAsync(resume.FilePath, newFolder);
 
             if (newPath == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    $"Could not find resume file: {resume.FilePath}");
-
+                // Keep the DB in sync with files already moved
+                await _context.SaveChangesAsync();
+                ModelState.AddModelError("", $"Could not move resume file: {resume.FilePath}");
                 await LoadProperties();
                 return Page();
             }
@@ -85,37 +112,40 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostGeneratedFolderAsync([FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    public async Task<IActionResult> OnPostGeneratedFolderAsync(
+        [FromForm(Name = "ValueInput")] SettingUpdateInput input)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || !TryPrepareFolder(input?.Value, out var newFolder))
         {
             await LoadProperties();
             return Page();
         }
 
-        var newFolder = input.Value;
+        var applications = await _context.Applications
+            .Where(x => !string.IsNullOrWhiteSpace(x.ResumePath))
+            .ToListAsync();
 
-        Directory.CreateDirectory(newFolder);
-
-        var applications = await _context.Applications.Where(x => !string.IsNullOrWhiteSpace(x.ResumePath)).ToListAsync();
-
-        foreach (var resume in applications)
+        var missing = applications.FirstOrDefault(a => !System.IO.File.Exists(a.ResumePath));
+        if (missing != null)
         {
-            var newPath = await _file.MoveAsync(
-                resume.ResumePath,
-                newFolder);
+            ModelState.AddModelError("", $"Could not find generated file: {missing.ResumePath}");
+            await LoadProperties();
+            return Page();
+        }
+
+        foreach (var application in applications)
+        {
+            var newPath = await _file.MoveAsync(application.ResumePath, newFolder);
 
             if (newPath == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    $"Could not find resume file: {resume.ResumePath}");
-
+                await _context.SaveChangesAsync();
+                ModelState.AddModelError("", $"Could not move generated file: {application.ResumePath}");
                 await LoadProperties();
                 return Page();
             }
 
-            resume.ResumePath = newPath;
+            application.ResumePath = newPath;
         }
 
         await _context.SaveChangesAsync();

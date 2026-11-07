@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Venture.Services;
 using Venture.InputModels;
 using Venture.InputModels.CoverLetter;
+using Venture.Utils;
 
 namespace Venture.Pages.CoverLetter;
 
@@ -46,32 +47,58 @@ public class IndexModel : PageModel
         await LoadProperties();
     }
 
-    public async Task<IActionResult> OnPostCoverLetterFolderAsync([FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    private bool TryPrepareFolder(string? raw, out string folder)
     {
-        if (!ModelState.IsValid)
+        const string key = "ValueInput.Value";
+
+        if (!PathUtils.TryNormalize(raw, out folder, out var error))
+        {
+            ModelState.AddModelError(key, error!);
+            return false;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(folder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            ModelState.AddModelError(key, "Can't create or access that folder.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public async Task<IActionResult> OnPostCoverLetterFolderAsync(
+        [FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    {
+        if (!ModelState.IsValid || !TryPrepareFolder(input?.Value, out var newFolder))
         {
             await LoadProperties();
             return Page();
         }
 
-        var newFolder = input.Value;
-
-        Directory.CreateDirectory(newFolder);
-
         var coverLetters = await _context.CoverLetters.ToListAsync();
+
+        // Check everything exists before moving anything
+        var missing = coverLetters.FirstOrDefault(c => !System.IO.File.Exists(c.FilePath));
+        if (missing != null)
+        {
+            ModelState.AddModelError("", $"Could not find cover letter file: {missing.FilePath}");
+            await LoadProperties();
+            return Page();
+        }
 
         foreach (var coverLetter in coverLetters)
         {
-            var newPath = await _file.MoveAsync(
-                coverLetter.FilePath,
-                newFolder);
+            var newPath = await _file.MoveAsync(coverLetter.FilePath, newFolder);
 
             if (newPath == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    $"Could not find cover letter file: {coverLetter.FilePath}");
-
+                // Keep the DB in sync with files already moved
+                await _context.SaveChangesAsync();
+                ModelState.AddModelError("", $"Could not move cover letter file: {coverLetter.FilePath}");
                 await LoadProperties();
                 return Page();
             }
@@ -85,37 +112,40 @@ public class IndexModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostGeneratedFolderAsync([FromForm(Name = "ValueInput")] SettingUpdateInput input)
+    public async Task<IActionResult> OnPostGeneratedFolderAsync(
+        [FromForm(Name = "ValueInput")] SettingUpdateInput input)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || !TryPrepareFolder(input?.Value, out var newFolder))
         {
             await LoadProperties();
             return Page();
         }
 
-        var newFolder = input.Value;
+        var applications = await _context.Applications
+            .Where(x => !string.IsNullOrWhiteSpace(x.CoverLetterPath))
+            .ToListAsync();
 
-        Directory.CreateDirectory(newFolder);
-
-        var applications = await _context.Applications.Where(x => !string.IsNullOrWhiteSpace(x.CoverLetterPath)).ToListAsync();
-
-        foreach (var coverLetter in applications)
+        var missing = applications.FirstOrDefault(a => !System.IO.File.Exists(a.CoverLetterPath));
+        if (missing != null)
         {
-            var newPath = await _file.MoveAsync(
-                coverLetter.CoverLetterPath,
-                newFolder);
+            ModelState.AddModelError("", $"Could not find generated file: {missing.CoverLetterPath}");
+            await LoadProperties();
+            return Page();
+        }
+
+        foreach (var application in applications)
+        {
+            var newPath = await _file.MoveAsync(application.CoverLetterPath, newFolder);
 
             if (newPath == null)
             {
-                ModelState.AddModelError(
-                    "",
-                    $"Could not find cover letter file: {coverLetter.CoverLetterPath}");
-
+                await _context.SaveChangesAsync();
+                ModelState.AddModelError("", $"Could not move generated file: {application.CoverLetterPath}");
                 await LoadProperties();
                 return Page();
             }
 
-            coverLetter.CoverLetterPath = newPath;
+            application.CoverLetterPath = newPath;
         }
 
         await _context.SaveChangesAsync();
