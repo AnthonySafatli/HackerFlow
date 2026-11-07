@@ -1,3 +1,5 @@
+using Venture.Utils;
+
 namespace Venture.Services;
 
 /// <summary>
@@ -172,13 +174,16 @@ public class FileService : IFileService
     /// </summary>
     private static string Resolve(string path)
     {
-        if (path.StartsWith("~"))
-        {
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            path = Path.Combine(home, path[1..].TrimStart('/', '\\'));
-        }
+        // TryNormalize requires an absolute path, so keep supporting relative input here
+        var expanded = PathUtils.ExpandHome(path);
 
-        return Path.GetFullPath(path);
+        if (!Path.IsPathFullyQualified(expanded))
+            expanded = Path.GetFullPath(expanded);
+
+        if (!PathUtils.TryNormalize(expanded, out var normalized, out var error))
+            throw new ArgumentException(error, nameof(path));
+
+        return normalized;
     }
 
     /// <summary>
