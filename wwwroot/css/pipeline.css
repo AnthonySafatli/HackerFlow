@@ -5,13 +5,17 @@
   width: 100%;
   overflow-x: auto;
   padding-bottom: 2px;
+  padding-right: 22px;
+  scrollbar-width: thin;
 }
 
 .pipeline-step {
   position: relative;
 
-  flex: 1 1 0;
+  flex: 1 0 auto;
   min-width: 130px;
+
+  white-space: nowrap;
 
   display: flex;
   align-items: center;
@@ -169,4 +173,17 @@
   margin-right: 8px;
   border-radius: 50%;
   background-color: var(--status-color);
+}
+
+.pipeline-step span {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .pipeline-step {
+    flex: 0 0 auto;
+    padding: 0 24px 0 32px;
+  }
 }
