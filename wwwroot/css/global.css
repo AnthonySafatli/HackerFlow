@@ -28,6 +28,30 @@ body {
   filter: invert(1);
 }
 
+footer span strong {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--hf-primary) 50%, var(--hf-text)),
+    color-mix(in srgb, var(--hf-accent) 50%, var(--hf-text))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+h1 {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--hf-primary) 40%, var(--hf-text)),
+    color-mix(in srgb, var(--hf-accent) 40%, var(--hf-text))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
 /* Navbar */
 
 .navbar {
